@@ -27,7 +27,9 @@ public class LongClickMovementMethod extends LinkMovementMethod {
         public void run() {
             wasActivated = true;
         }
-    };
+    }
+
+    ;
 
     private WasActivatedRunnable runnable;
 
@@ -68,13 +70,14 @@ public class LongClickMovementMethod extends LinkMovementMethod {
 //                        link[0].onLongClick(widget);
 //                    }
 
-                if(runnable != null) {
+                if (runnable != null) {
 //                        long click, do nothing
-                    if(runnable.wasActivated) {}
+                    if (runnable.wasActivated) {
+                    }
 //                        single click
                     else {
                         widget.removeCallbacks(runnable);
-                        if(link.length > 0) link[0].onClick(widget);
+                        if (link.length > 0) link[0].onClick(widget);
                     }
 
                     runnable = null;
@@ -90,7 +93,7 @@ public class LongClickMovementMethod extends LinkMovementMethod {
 
 //                    lastClickTime = System.currentTimeMillis();
 
-                if(link.length > 0) {
+                if (link.length > 0) {
                     final LongClickableSpan span = link[0];
                     runnable = new WasActivatedRunnable() {
 
@@ -107,7 +110,7 @@ public class LongClickMovementMethod extends LinkMovementMethod {
 //                Tuils.log("action move or cancel");
 
 //                action_move
-                if(line != lastLine) {
+                if (line != lastLine) {
 //                    Tuils.log("line != last line");
                     widget.removeCallbacks(runnable);
                 }
@@ -124,6 +127,7 @@ public class LongClickMovementMethod extends LinkMovementMethod {
     }
 
     private static LongClickMovementMethod sInstance;
+
     public static MovementMethod getInstance(int longClickDuration) {
         if (sInstance == null) {
             sInstance = new LongClickMovementMethod();

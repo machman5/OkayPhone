@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.widget.EditText;
 
-import java.io.File;
-
 import com.crearo.okayphone.commands.CommandGroup;
 import com.crearo.okayphone.commands.ExecutePack;
+
+import java.io.File;
 
 /**
  * Created by francescoandreuzzi on 25/01/2017.

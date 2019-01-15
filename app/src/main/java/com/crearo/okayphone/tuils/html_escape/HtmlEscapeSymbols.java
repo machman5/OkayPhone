@@ -1,20 +1,20 @@
 /*
  * =============================================================================
- * 
+ *
  *   Copyright (c) 2014-2017, The UNBESCAPE team (http://www.unbescape.org)
- * 
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
- * 
+ *
  * =============================================================================
  */
 package com.crearo.okayphone.tuils.html_escape;
@@ -29,19 +29,17 @@ import java.util.Map;
 
 /**
  * <p>
- *   Instances of this class group all the complex data structures needed to support full escape and unescape
- *   operations for HTML.
+ * Instances of this class group all the complex data structures needed to support full escape and unescape
+ * operations for HTML.
  * </p>
  * <p>
- *   Most of the fields in objects of this class are package-accessible, as the class itself is, in order to allow
- *   them (the fields) to be directly accessed from the classes doing the real escape/unescape (basically,
- *   the {@link HtmlEscapeUtil} class.
+ * Most of the fields in objects of this class are package-accessible, as the class itself is, in order to allow
+ * them (the fields) to be directly accessed from the classes doing the real escape/unescape (basically,
+ * the {@link HtmlEscapeUtil} class.
  * </p>
- * 
- * @author Daniel Fern&aacute;ndez
- * 
- * @since 1.0.0
  *
+ * @author Daniel Fern&aacute;ndez
+ * @since 1.0.0
  */
 final class HtmlEscapeSymbols {
 
@@ -68,8 +66,6 @@ final class HtmlEscapeSymbols {
      *      See: http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
      *
      */
-
-
 
 
     /*
@@ -104,7 +100,7 @@ final class HtmlEscapeSymbols {
      * - Approximate max size will be (being a complex object like a Map, it's a rough approximation):
      *   16 (header) + 138 * (16 (entry header) + 16*2 (key, value headers) + 4 (key) + 2 (value)) = 7468 bytes
      */
-    final Map<Integer,Short> NCRS_BY_CODEPOINT_OVERFLOW;// No need to instantiate it until we know it's needed
+    final Map<Integer, Short> NCRS_BY_CODEPOINT_OVERFLOW;// No need to instantiate it until we know it's needed
 
     /*
      * Maximum char value inside the ASCII plane
@@ -165,8 +161,6 @@ final class HtmlEscapeSymbols {
     static final short NO_NCR = (short) 0;
 
 
-
-
     /*
      * Constants holding the definition of all the HtmlEscapeSymbols for HTML4 and HTML5, to be used in escape and
      * unescape operations.
@@ -175,17 +169,12 @@ final class HtmlEscapeSymbols {
     static final HtmlEscapeSymbols HTML5_SYMBOLS;
 
 
-
-
     static {
 
         HTML4_SYMBOLS = Html4EscapeSymbolsInitializer.initializeHtml4();
         HTML5_SYMBOLS = Html5EscapeSymbolsInitializer.initializeHtml5();
 
     }
-
-
-
 
 
     /*
@@ -204,7 +193,7 @@ final class HtmlEscapeSymbols {
         final List<char[]> ncrs = new ArrayList<char[]>(references.references.size() + 5);
         final List<Integer> codepoints = new ArrayList<Integer>(references.references.size() + 5);
         final List<int[]> doubleCodepoints = new ArrayList<int[]>(100);
-        final Map<Integer,Short> ncrsByCodepointOverflow = new HashMap<Integer, Short>(20);
+        final Map<Integer, Short> ncrsByCodepointOverflow = new HashMap<Integer, Short>(20);
 
         // For each reference, initialize its corresponding codepoint -> ncr and ncr -> codepoint structures
         for (final Reference reference : references.references) {
@@ -260,9 +249,9 @@ final class HtmlEscapeSymbols {
             final char[] ncr = ncrsOrdered.get(i);
             SORTED_NCRS[i] = ncr;
 
-            for (short j = 0; j  < SORTED_NCRS.length; j++) {
+            for (short j = 0; j < SORTED_NCRS.length; j++) {
 
-                if (Arrays.equals(ncr,ncrs.get(j))) {
+                if (Arrays.equals(ncr, ncrs.get(j))) {
 
                     final int cp = codepoints.get(j);
                     SORTED_CODEPOINTS[i] = cp;
@@ -387,7 +376,7 @@ final class HtmlEscapeSymbols {
                 return 1;
             }
             // We have a partial match. Can be an NCR not finishing in a semicolon
-            return - ((textLen - i) + 10);
+            return -((textLen - i) + 10);
         }
         return 0;
     }
@@ -422,7 +411,7 @@ final class HtmlEscapeSymbols {
                 return 1;
             }
             // We have a partial match. Can be an NCR not finishing in a semicolon
-            return - ((textLen - i) + 10);
+            return -((textLen - i) + 10);
         }
         return 0;
     }
@@ -548,7 +537,7 @@ final class HtmlEscapeSymbols {
         }
 
         void addReference(final int codepoint0, final int codepoint1, final String ncr) {
-            this.references.add(new Reference(ncr, new int[] { codepoint0, codepoint1 }));
+            this.references.add(new Reference(ncr, new int[]{codepoint0, codepoint1}));
         }
 
     }
@@ -566,7 +555,6 @@ final class HtmlEscapeSymbols {
         }
 
     }
-
 
 
 }

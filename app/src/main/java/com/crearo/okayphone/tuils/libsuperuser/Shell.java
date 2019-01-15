@@ -19,6 +19,8 @@ package com.crearo.okayphone.tuils.libsuperuser;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.crearo.okayphone.tuils.Tuils;
+
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,9 +38,7 @@ import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.crearo.okayphone.tuils.Tuils;
-
-import static com.crearo.okayphone.tuils.libsuperuser.StreamGobbler.*;
+import static com.crearo.okayphone.tuils.libsuperuser.StreamGobbler.OnLineListener;
 
 /**
  * Class providing functionality to execute commands in a (root) shell
@@ -352,7 +352,7 @@ public class Shell {
 
                 List<String> ret = Shell.run(
                         internal ? "su -V" : "su -v",
-                        new String[] { "exit" },
+                        new String[]{"exit"},
                         null,
                         false
                 );

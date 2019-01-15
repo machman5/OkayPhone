@@ -2,13 +2,13 @@ package com.crearo.okayphone.managers;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.crearo.okayphone.managers.xml.XMLPrefsManager;
 import com.crearo.okayphone.managers.xml.options.Theme;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by francescoandreuzzi on 31/08/2017.
@@ -33,7 +33,7 @@ public class MessagesManager {
         this.context = context;
 
         original = new ArrayList<>();
-        for(Message m : ms) original.add(m);
+        for (Message m : ms) original.add(m);
         copy = new ArrayList<>(original);
 
         count = 0;
@@ -45,16 +45,16 @@ public class MessagesManager {
     public void onCmd() {
         count++;
 
-        if(count == REACH_THIS) {
+        if (count == REACH_THIS) {
             count = 0;
 
-            if(copy.size() == 0) {
+            if (copy.size() == 0) {
                 copy = new ArrayList<>(original);
                 random = new Random();
             }
 
             int index = random.nextInt(copy.size());
-            if(copy.size() <= index) {
+            if (copy.size() <= index) {
                 return;
             }
 

@@ -29,8 +29,8 @@ public class call implements CommandAbstraction {
 
         String number = info.getString();
         String s = Tuils.EMPTYSTRING;
-        for(char c : number.toCharArray()) {
-            if(c == '#') s += Uri.encode("#");
+        for (char c : number.toCharArray()) {
+            if (c == '#') s += Uri.encode("#");
             else s += c;
         }
 

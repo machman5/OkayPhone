@@ -10,11 +10,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 
-import java.io.File;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.crearo.okayphone.commands.Command;
 import com.crearo.okayphone.commands.CommandGroup;
 import com.crearo.okayphone.commands.CommandTuils;
@@ -43,6 +38,12 @@ import com.crearo.okayphone.tuils.interfaces.OnRedirectionListener;
 import com.crearo.okayphone.tuils.interfaces.Redirectator;
 import com.crearo.okayphone.tuils.libsuperuser.Shell;
 import com.crearo.okayphone.tuils.libsuperuser.ShellHolder;
+
+import java.io.File;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
@@ -64,25 +65,35 @@ public class MainManager {
 
     public static String ACTION_EXEC = BuildConfig.APPLICATION_ID + ".main_exec";
     public static String CMD = "cmd", NEED_WRITE_INPUT = "writeInput", ALIAS_NAME = "aliasName", PARCELABLE = "parcelable", CMD_COUNT = "cmdCount", MUSIC_SERVICE = "musicService";
-
+    public static Shell.Interactive interactive;
+    public static int commandCount = 0;
+    private final String COMMANDS_PKG = ".commands.main.raw";
+    //
+    String appFormat;
+    int timeColor;
+    int outputColor;
+    Pattern pa = Pattern.compile("%a", Pattern.CASE_INSENSITIVE | Pattern.LITERAL);
+    Pattern pp = Pattern.compile("%p", Pattern.CASE_INSENSITIVE | Pattern.LITERAL);
+    Pattern pl = Pattern.compile("%l", Pattern.CASE_INSENSITIVE | Pattern.LITERAL);
     private RedirectCommand redirect;
+    private OnRedirectionListener redirectionListener;
     private Redirectator redirectator = new Redirectator() {
         @Override
         public void prepareRedirection(RedirectCommand cmd) {
             redirect = cmd;
 
-            if(redirectionListener != null) {
+            if (redirectionListener != null) {
                 redirectionListener.onRedirectionRequest(cmd);
             }
         }
 
         @Override
         public void cleanup() {
-            if(redirect != null) {
+            if (redirect != null) {
                 redirect.beforeObjects.clear();
                 redirect.afterObjects.clear();
 
-                if(redirectionListener != null) {
+                if (redirectionListener != null) {
                     redirectionListener.onRedirectionEnd(redirect);
                 }
 
@@ -90,14 +101,7 @@ public class MainManager {
             }
         }
     };
-    private OnRedirectionListener redirectionListener;
-    public void setRedirectionListener(OnRedirectionListener redirectionListener) {
-        this.redirectionListener = redirectionListener;
-    }
-
-    private final String COMMANDS_PKG = "ohi.andre.consolelauncher.commands.main.raw";
-
-    private CmdTrigger[] triggers = new CmdTrigger[] {
+    private CmdTrigger[] triggers = new CmdTrigger[]{
             new GroupTrigger(),
             new AliasTrigger(),
             new TuiCommandTrigger(),
@@ -105,28 +109,18 @@ public class MainManager {
             new ShellCommandTrigger()
     };
     private MainPack mainPack;
-
     private Context mContext;
-
     private boolean showAliasValue;
     private boolean showAppHistory;
     private int aliasContentColor;
-
     private String multipleCmdSeparator;
-
-    public static Shell.Interactive interactive;
-
     private AliasManager aliasManager;
     private RssManager rssManager;
     private AppsManager appsManager;
     private ContactManager contactManager;
     private MusicManager2 musicManager2;
     private ThemeManager themeManager;
-
     private BroadcastReceiver receiver;
-
-    public static int commandCount = 0;
-
     private boolean keeperServiceRunning;
 
     protected MainManager(LauncherActivity c) {
@@ -140,7 +134,7 @@ public class MainManager {
 
         multipleCmdSeparator = XMLPrefsManager.get(Behavior.multiple_cmd_separator);
 
-        CommandGroup group = new CommandGroup(mContext, COMMANDS_PKG);
+        CommandGroup group = new CommandGroup(mContext, c.getPackageName() + COMMANDS_PKG);
 
         try {
             contactManager = new ContactManager(mContext);
@@ -155,7 +149,7 @@ public class MainManager {
         interactive = shellHolder.build();
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .cache(new Cache(mContext.getCacheDir(), 10*1024*1024))
+                .cache(new Cache(mContext.getCacheDir(), 10 * 1024 * 1024))
                 .build();
 
         rssManager = new RssManager(mContext, client);
@@ -188,13 +182,13 @@ public class MainManager {
                     boolean needWriteInput = intent.getBooleanExtra(NEED_WRITE_INPUT, false);
                     Parcelable p = intent.getParcelableExtra(PARCELABLE);
 
-                    if(needWriteInput) {
+                    if (needWriteInput) {
                         Intent i = new Intent(PrivateIOReceiver.ACTION_INPUT);
                         i.putExtra(PrivateIOReceiver.TEXT, cmd);
                         LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(i);
                     }
 
-                    if(p != null) {
+                    if (p != null) {
                         onCommand(cmd, p, intent.getBooleanExtra(MainManager.MUSIC_SERVICE, false));
                     } else {
                         onCommand(cmd, aliasName, intent.getBooleanExtra(MainManager.MUSIC_SERVICE, false));
@@ -206,44 +200,48 @@ public class MainManager {
         LocalBroadcastManager.getInstance(mContext.getApplicationContext()).registerReceiver(receiver, filter);
     }
 
+    public void setRedirectionListener(OnRedirectionListener redirectionListener) {
+        this.redirectionListener = redirectionListener;
+    }
+
     private void updateServices(String cmd, boolean wasMusicService) {
 
-        if(keeperServiceRunning) {
+        if (keeperServiceRunning) {
             Intent i = new Intent(mContext, KeeperService.class);
             i.putExtra(KeeperService.CMD_KEY, cmd);
             i.putExtra(KeeperService.PATH_KEY, mainPack.currentDirectory.getAbsolutePath());
             mContext.startService(i);
         }
 
-        if(wasMusicService) {
+        if (wasMusicService) {
             Intent i = new Intent(mContext, MusicService.class);
             mContext.startService(i);
         }
     }
 
     public void onCommand(String input, Object obj, boolean wasMusicService) {
-        if(obj == null || !(obj instanceof AppsManager.LaunchInfo)) {
+        if (obj == null || !(obj instanceof AppsManager.LaunchInfo)) {
             onCommand(input, null, wasMusicService);
             return;
         }
 
         updateServices(input, wasMusicService);
 
-        if(obj instanceof AppsManager.LaunchInfo && ((AppsManager.LaunchInfo) obj).publicLabel.equals(input)) {
+        if (obj instanceof AppsManager.LaunchInfo && ((AppsManager.LaunchInfo) obj).publicLabel.equals(input)) {
             performLaunch((AppsManager.LaunchInfo) obj);
         } else {
             onCommand(input, null, wasMusicService);
         }
     }
 
-//    command manager
+    //    command manager
     public void onCommand(String input, String alias, boolean wasMusicService) {
         input = Tuils.removeUnncesarySpaces(input);
 
-        if(alias == null) updateServices(input, wasMusicService);
+        if (alias == null) updateServices(input, wasMusicService);
 
-        if(redirect != null) {
-            if(!redirect.isWaitingPermission()) {
+        if (redirect != null) {
+            if (!redirect.isWaitingPermission()) {
                 redirect.afterObjects.add(input);
             }
             String output = redirect.onRedirect(mainPack);
@@ -252,18 +250,18 @@ public class MainManager {
             return;
         }
 
-        if(alias != null && showAliasValue) {
-           Tuils.sendOutput(aliasContentColor, mContext, aliasManager.formatLabel(alias, input));
+        if (alias != null && showAliasValue) {
+            Tuils.sendOutput(aliasContentColor, mContext, aliasManager.formatLabel(alias, input));
         }
 
         String[] cmds;
-        if(multipleCmdSeparator.length() > 0) {
+        if (multipleCmdSeparator.length() > 0) {
             cmds = input.split(multipleCmdSeparator);
         } else {
-            cmds = new String[] {input};
+            cmds = new String[]{input};
         }
 
-        for(String cmd : cmds) {
+        for (String cmd : cmds) {
             for (CmdTrigger trigger : triggers) {
                 boolean r;
                 try {
@@ -326,23 +324,14 @@ public class MainManager {
         };
     }
 
-//
-    String appFormat;
-    int timeColor;
-    int outputColor;
-
-    Pattern pa = Pattern.compile("%a", Pattern.CASE_INSENSITIVE | Pattern.LITERAL);
-    Pattern pp = Pattern.compile("%p", Pattern.CASE_INSENSITIVE | Pattern.LITERAL);
-    Pattern pl = Pattern.compile("%l", Pattern.CASE_INSENSITIVE | Pattern.LITERAL);
-
     public boolean performLaunch(AppsManager.LaunchInfo i) {
         Intent intent = appsManager.getIntent(i);
         if (intent == null) {
             return false;
         }
 
-        if(showAppHistory) {
-            if(appFormat == null) {
+        if (showAppHistory) {
+            if (appFormat == null) {
                 appFormat = XMLPrefsManager.get(Behavior.app_launch_format);
                 timeColor = XMLPrefsManager.getColor(Theme.time_color);
                 outputColor = XMLPrefsManager.getColor(Theme.output_color);
@@ -369,6 +358,14 @@ public class MainManager {
 
     interface CmdTrigger {
         boolean trigger(ExecutePack info, String input) throws Exception;
+    }
+
+    public interface Group {
+        List<? extends Compare.Stringable> members();
+
+        boolean use(MainPack mainPack, String input);
+
+        String name();
     }
 
     private class AliasTrigger implements CmdTrigger {
@@ -400,8 +397,8 @@ public class MainManager {
             int index = input.indexOf(Tuils.SPACE);
             String name;
 
-            if(index != -1) {
-                name = input.substring(0,index);
+            if (index != -1) {
+                name = input.substring(0, index);
                 input = input.substring(index + 1);
             } else {
                 name = input;
@@ -409,10 +406,10 @@ public class MainManager {
             }
 
             List<? extends Group> appGroups = ((MainPack) info).appsManager.groups;
-            if(appGroups != null) {
-                for(Group g : appGroups) {
-                    if(name.equals(g.name())) {
-                        if(input == null) {
+            if (appGroups != null) {
+                for (Group g : appGroups) {
+                    if (name.equals(g.name())) {
+                        if (input == null) {
                             Tuils.sendOutput(mContext, AppsManager.AppUtils.printApps(AppsManager.AppUtils.labelList((List<AppsManager.LaunchInfo>) g.members(), false)));
                             return true;
                         } else {
@@ -434,9 +431,9 @@ public class MainManager {
         final Shell.OnCommandResultListener pwdResult = new Shell.OnCommandResultListener() {
             @Override
             public void onCommandResult(int commandCode, int exitCode, List<String> output) {
-                if(commandCode == PWD_CODE && output.size() == 1) {
+                if (commandCode == PWD_CODE && output.size() == 1) {
                     File f = new File(output.get(0));
-                    if(f.exists()) {
+                    if (f.exists()) {
                         mainPack.currentDirectory = f;
 
                         LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(new Intent(UIManager.ACTION_UPDATE_HINT));
@@ -448,7 +445,7 @@ public class MainManager {
         final Shell.OnCommandResultListener cdResult = new Shell.OnCommandResultListener() {
             @Override
             public void onCommandResult(int commandCode, int exitCode, List<String> output) {
-                if(commandCode == CD_CODE) {
+                if (commandCode == CD_CODE) {
                     interactive.addCommand("pwd", PWD_CODE, pwdResult);
                 }
             }
@@ -460,11 +457,12 @@ public class MainManager {
             new StoppableThread() {
                 @Override
                 public void run() {
-                    if(input.trim().equalsIgnoreCase("su")) {
-                        if(Shell.SU.available()) LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(new Intent(UIManager.ACTION_ROOT));
+                    if (input.trim().equalsIgnoreCase("su")) {
+                        if (Shell.SU.available())
+                            LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(new Intent(UIManager.ACTION_ROOT));
                         interactive.addCommand("su");
 
-                    } else if(input.contains("cd ")) {
+                    } else if (input.contains("cd ")) {
                         interactive.addCommand(input, CD_CODE, cdResult);
                     } else {
                         interactive.addCommand(input);
@@ -492,7 +490,7 @@ public class MainManager {
         public boolean trigger(final ExecutePack info, final String input) throws Exception {
 
             final Command command = CommandTuils.parse(input, info, false);
-            if(command == null) return false;
+            if (command == null) return false;
 
             mainPack.lastCommand = input;
 
@@ -504,7 +502,7 @@ public class MainManager {
                     try {
                         String output = command.exec(mContext.getResources(), info);
 
-                        if(output != null) {
+                        if (output != null) {
                             Tuils.sendOutput(mContext, output);
                         }
                     } catch (Exception e) {
@@ -516,11 +514,5 @@ public class MainManager {
 
             return true;
         }
-    }
-
-    public interface Group {
-        List<? extends Compare.Stringable> members();
-        boolean use(MainPack mainPack, String input);
-        String name();
     }
 }

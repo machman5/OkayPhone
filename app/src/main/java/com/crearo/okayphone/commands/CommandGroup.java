@@ -3,15 +3,15 @@ package com.crearo.okayphone.commands;
 import android.content.Context;
 import android.os.Build;
 
+import com.crearo.okayphone.commands.specific.APICommand;
+import com.crearo.okayphone.tuils.Tuils;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import com.crearo.okayphone.commands.specific.APICommand;
-import com.crearo.okayphone.tuils.Tuils;
 
 public class CommandGroup {
 
@@ -34,7 +34,7 @@ public class CommandGroup {
         while (iterator.hasNext()) {
             String s = iterator.next();
             CommandAbstraction ca = buildCommand(s);
-            if(ca != null && ( !(ca instanceof APICommand) || ((APICommand) ca).willWorkOn(Build.VERSION.SDK_INT))) {
+            if (ca != null && (!(ca instanceof APICommand) || ((APICommand) ca).willWorkOn(Build.VERSION.SDK_INT))) {
                 cmdAbs.add(ca);
             } else {
                 iterator.remove();
@@ -49,8 +49,8 @@ public class CommandGroup {
     }
 
     public CommandAbstraction getCommandByName(String name) {
-        for(CommandAbstraction c : commands) {
-            if(c.getClass().getSimpleName().equals(name)) {
+        for (CommandAbstraction c : commands) {
+            if (c.getClass().getSimpleName().equals(name)) {
                 return c;
             }
         }
@@ -62,7 +62,7 @@ public class CommandGroup {
         String fullCmdName = packageName + Tuils.DOT + name;
         try {
             Class<CommandAbstraction> clazz = (Class<CommandAbstraction>) Class.forName(fullCmdName);
-            if(CommandAbstraction.class.isAssignableFrom(clazz)) {
+            if (CommandAbstraction.class.isAssignableFrom(clazz)) {
                 Constructor<CommandAbstraction> constructor = clazz.getConstructor();
                 return constructor.newInstance();
             }

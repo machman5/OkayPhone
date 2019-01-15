@@ -9,5 +9,6 @@ import com.crearo.okayphone.commands.specific.RedirectCommand;
 public interface Redirectator {
 
     void prepareRedirection(RedirectCommand cmd);
+
     void cleanup();
 }

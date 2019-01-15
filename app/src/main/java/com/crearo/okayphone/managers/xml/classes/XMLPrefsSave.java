@@ -8,9 +8,14 @@ public interface XMLPrefsSave {
     String APP = "app", INTEGER = "int", BOOLEAN = "boolean", TEXT = "text", COLOR = "color";
 
     String defaultValue();
+
     String label();
+
     String type();
+
     String info();
+
     XMLPrefsElement parent();
+
     boolean is(String s);
 }

@@ -23,9 +23,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.commands.tuixt.TuixtActivity;
 import com.crearo.okayphone.managers.ContactManager;
@@ -52,6 +49,9 @@ import com.crearo.okayphone.tuils.Tuils;
 import com.crearo.okayphone.tuils.interfaces.Inputable;
 import com.crearo.okayphone.tuils.interfaces.Outputable;
 import com.crearo.okayphone.tuils.interfaces.Reloadable;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
@@ -87,7 +87,7 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
         @Override
         public void in(String s) {
-            if(ui != null) ui.setInput(s);
+            if (ui != null) ui.setInput(s);
         }
 
         @Override
@@ -115,8 +115,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
         private final int DELAY = 500;
 
-        Queue<SimpleMutableEntry<CharSequence,Integer>> textColor = new LinkedList<>();
-        Queue<SimpleMutableEntry<CharSequence,Integer>> textCategory = new LinkedList<>();
+        Queue<SimpleMutableEntry<CharSequence, Integer>> textColor = new LinkedList<>();
+        Queue<SimpleMutableEntry<CharSequence, Integer>> textCategory = new LinkedList<>();
 
         boolean charged = false;
         Handler handler = new Handler();
@@ -124,12 +124,12 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                if(ui == null) {
+                if (ui == null) {
                     handler.postDelayed(this, DELAY);
                     return;
                 }
 
-                SimpleMutableEntry<CharSequence,Integer> sm;
+                SimpleMutableEntry<CharSequence, Integer> sm;
                 while ((sm = textCategory.poll()) != null) {
                     ui.setOutput(sm.getKey(), sm.getValue());
                 }
@@ -147,11 +147,11 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
         @Override
         public void onOutput(CharSequence output) {
-            if(ui != null) ui.setOutput(output, TerminalManager.CATEGORY_OUTPUT);
+            if (ui != null) ui.setOutput(output, TerminalManager.CATEGORY_OUTPUT);
             else {
                 textCategory.add(new SimpleMutableEntry<>(output, TerminalManager.CATEGORY_OUTPUT));
 
-                if(!charged) {
+                if (!charged) {
                     charged = true;
                     handler.postDelayed(r, DELAY);
                 }
@@ -160,11 +160,11 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
         @Override
         public void onOutput(CharSequence output, int category) {
-            if(ui != null) ui.setOutput(output, category);
+            if (ui != null) ui.setOutput(output, category);
             else {
                 textCategory.add(new SimpleMutableEntry<>(output, category));
 
-                if(!charged) {
+                if (!charged) {
                     charged = true;
                     handler.postDelayed(r, DELAY);
                 }
@@ -173,11 +173,11 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
         @Override
         public void onOutput(int color, CharSequence output) {
-            if(ui != null) ui.setOutput(color, output);
+            if (ui != null) ui.setOutput(color, output);
             else {
                 textColor.add(new SimpleMutableEntry<>(output, color));
 
-                if(!charged) {
+                if (!charged) {
                     charged = true;
                     handler.postDelayed(r, DELAY);
                 }
@@ -186,7 +186,7 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
         @Override
         public void dispose() {
-            if(handler != null) handler.removeCallbacksAndMessages(null);
+            if (handler != null) handler.removeCallbacksAndMessages(null);
         }
     };
 
@@ -194,13 +194,13 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
 
         if (isFinishing()) {
             return;
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED  &&
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, LauncherActivity.STARTING_PERMISSION);
@@ -234,12 +234,12 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         getApplicationContext().registerReceiver(publicIOReceiver, filter1);
 
         int requestedOrientation = XMLPrefsManager.getInt(Behavior.orientation);
-        if(requestedOrientation != 2 && requestedOrientation != -1) {
+        if (requestedOrientation != 2 && requestedOrientation != -1) {
             int orientation = getResources().getConfiguration().orientation;
-            if(orientation != requestedOrientation) setRequestedOrientation(requestedOrientation);
+            if (orientation != requestedOrientation) setRequestedOrientation(requestedOrientation);
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !XMLPrefsManager.getBoolean(Ui.ignore_bar_color)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !XMLPrefsManager.getBoolean(Ui.ignore_bar_color)) {
             Window window = getWindow();
 
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -256,20 +256,21 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         } else {
             try {
                 stopService(keeperIntent);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
 
         boolean fullscreen = XMLPrefsManager.getBoolean(Ui.fullscreen);
 
         boolean useSystemWP = XMLPrefsManager.getBoolean(Ui.system_wallpaper);
         if (useSystemWP) {
-            if(fullscreen) {
+            if (fullscreen) {
                 setTheme(R.style.Custom_SystemWP_Fullscreen);
             } else {
                 setTheme(R.style.Custom_SystemWP);
             }
         } else {
-            if(fullscreen) {
+            if (fullscreen) {
                 setTheme(R.style.Custom_Solid_Fullscreen);
             } else {
                 setTheme(R.style.Custom_Solid);
@@ -283,15 +284,15 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         }
 
         boolean notifications = XMLPrefsManager.getBoolean(Notifications.show_notifications) || XMLPrefsManager.get(Notifications.show_notifications).equalsIgnoreCase("enabled");
-        if(notifications) {
+        if (notifications) {
             try {
                 ComponentName notificationComponent = new ComponentName(this, NotificationService.class);
                 PackageManager pm = getPackageManager();
                 pm.setComponentEnabledSetting(notificationComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
-                if(!Tuils.hasNotificationAccess(this)) {
+                if (!Tuils.hasNotificationAccess(this)) {
                     Intent i = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                    if(i.resolveActivity(getPackageManager()) == null) {
+                    if (i.resolveActivity(getPackageManager()) == null) {
                         Toast.makeText(this, R.string.no_notification_access, Toast.LENGTH_LONG).show();
                     } else {
                         startActivity(i);
@@ -330,7 +331,7 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         in.in(Tuils.EMPTYSTRING);
         ui.focusTerminal();
 
-        if(fullscreen) Assist.assistActivity(this);
+        if (fullscreen) Assist.assistActivity(this);
 
         SharedPreferences preferences = getPreferences(0);
         SharedPreferences.Editor editor = preferences.edit();
@@ -373,13 +374,15 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     }
 
     private boolean disposed = false;
+
     private void dispose() {
-        if(disposed) return;
+        if (disposed) return;
 
         try {
             LocalBroadcastManager.getInstance(this.getApplicationContext()).unregisterReceiver(privateIOReceiver);
             getApplicationContext().unregisterReceiver(publicIOReceiver);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
             stopService(new Intent(this, NotificationMonitorService.class));
@@ -401,10 +404,10 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
             Tuils.log(e);
         }
 
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
 
-        if(main != null) main.destroy();
-        if(ui != null) ui.dispose();
+        if (main != null) main.destroy();
+        if (ui != null) ui.dispose();
 
         XMLPrefsManager.dispose();
         RegexManager.instance.dispose();
@@ -452,17 +455,18 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     }
 
     SuggestionsManager.Suggestion suggestion;
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         suggestion = (SuggestionsManager.Suggestion) v.getTag(R.id.suggestion_id);
 
-        if(suggestion.type == SuggestionsManager.Suggestion.TYPE_CONTACT) {
+        if (suggestion.type == SuggestionsManager.Suggestion.TYPE_CONTACT) {
             ContactManager.Contact contact = (ContactManager.Contact) suggestion.object;
 
             menu.setHeaderTitle(contact.name);
-            for(int count = 0; count < contact.numbers.size(); count++) {
+            for (int count = 0; count < contact.numbers.size(); count++) {
                 menu.add(0, count, count, contact.numbers.get(count));
             }
         }
@@ -470,8 +474,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if(suggestion != null) {
-            if(suggestion.type == SuggestionsManager.Suggestion.TYPE_CONTACT) {
+        if (suggestion != null) {
+            if (suggestion.type == SuggestionsManager.Suggestion.TYPE_CONTACT) {
                 ContactManager.Contact contact = (ContactManager.Contact) suggestion.object;
                 contact.setSelectedNumber(item.getItemId());
 
@@ -488,8 +492,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == TUIXT_REQUEST && resultCode != 0) {
-            if(resultCode == TuixtActivity.BACK_PRESSED) {
+        if (requestCode == TUIXT_REQUEST && resultCode != 0) {
+            if (resultCode == TuixtActivity.BACK_PRESSED) {
                 Tuils.sendOutput(this, R.string.tuixt_back_pressed);
             } else {
                 Tuils.sendOutput(this, data.getStringExtra(TuixtActivity.ERROR_KEY));
@@ -499,7 +503,7 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if(permissions.length > 0 && permissions[0].equals(Manifest.permission.READ_CONTACTS) && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (permissions.length > 0 && permissions[0].equals(Manifest.permission.READ_CONTACTS) && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(new Intent(ContactManager.ACTION_REFRESH));
         }
 
@@ -516,8 +520,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
                     break;
                 case STARTING_PERMISSION:
                     int count = 0;
-                    while(count < permissions.length && count < grantResults.length) {
-                        if(grantResults[count] == PackageManager.PERMISSION_DENIED) {
+                    while (count < permissions.length && count < grantResults.length) {
+                        if (grantResults[count] == PackageManager.PERMISSION_DENIED) {
                             Toast.makeText(this, R.string.permissions_toast, Toast.LENGTH_LONG).show();
                             new Thread() {
                                 @Override
@@ -526,7 +530,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
                                     try {
                                         sleep(2000);
-                                    } catch (InterruptedException e) {}
+                                    } catch (InterruptedException e) {
+                                    }
 
                                     runOnUiThread(stopActivity);
                                 }
@@ -544,7 +549,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
                     }
                     break;
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -552,7 +558,7 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         super.onNewIntent(intent);
 
         String cmd = intent.getStringExtra(PrivateIOReceiver.TEXT);
-        if(cmd != null) {
+        if (cmd != null) {
             Intent i = new Intent(MainManager.ACTION_EXEC);
             i.putExtra(MainManager.CMD_COUNT, MainManager.commandCount);
             i.putExtra(MainManager.CMD, cmd);

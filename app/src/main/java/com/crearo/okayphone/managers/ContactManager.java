@@ -15,16 +15,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import com.crearo.okayphone.BuildConfig;
 import com.crearo.okayphone.LauncherActivity;
 import com.crearo.okayphone.tuils.Compare;
 import com.crearo.okayphone.tuils.StoppableThread;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class ContactManager {
 
@@ -48,7 +48,7 @@ public class ContactManager {
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(intent.getAction().equals(ACTION_REFRESH)) {
+                if (intent.getAction().equals(ACTION_REFRESH)) {
                     refreshContacts(context);
                 }
             }
@@ -72,7 +72,7 @@ public class ContactManager {
             public void run() {
                 super.run();
 
-                if(contacts == null) {
+                if (contacts == null) {
                     contacts = new ArrayList<>();
                 } else {
                     contacts.clear();
@@ -80,7 +80,7 @@ public class ContactManager {
                 List<Contact> contacts = ContactManager.this.contacts;
 
                 Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                        new String[] {ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Data.CONTACT_ID, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.Data.IS_SUPER_PRIMARY,}, null, null,
+                        new String[]{ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Data.CONTACT_ID, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.Data.IS_SUPER_PRIMARY,}, null, null,
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
                 if (phones != null) {
@@ -97,16 +97,16 @@ public class ContactManager {
                         number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
                         prim = phones.getInt(phones.getColumnIndex(ContactsContract.Data.IS_SUPER_PRIMARY));
-                        if(prim > 0) {
+                        if (prim > 0) {
                             defaultNumber = lastNumbers.size();
                         }
 
-                        if(number == null || number.length() == 0) continue;
+                        if (number == null || number.length() == 0) continue;
 
-                        if(phones.isFirst()) {
+                        if (phones.isFirst()) {
                             lastId = id;
                             name = phones.getString(phones.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                        } else if(id != lastId || phones.isLast()) {
+                        } else if (id != lastId || phones.isLast()) {
                             lastId = id;
 
                             contacts.add(new Contact(name, lastNumbers, defaultNumber));
@@ -120,12 +120,12 @@ public class ContactManager {
                         }
 
                         String normalized = number.replaceAll(Tuils.SPACE, Tuils.EMPTYSTRING);
-                        if(!nrml.contains(normalized)) {
+                        if (!nrml.contains(normalized)) {
                             nrml.add(normalized);
                             lastNumbers.add(number);
                         }
 
-                        if(name != null && phones.isLast()) {
+                        if (name != null && phones.isLast()) {
                             contacts.add(new Contact(name, lastNumbers, defaultNumber));
                         }
                     }
@@ -133,9 +133,9 @@ public class ContactManager {
                 }
 
                 Iterator<Contact> iterator = contacts.iterator();
-                while(iterator.hasNext()) {
+                while (iterator.hasNext()) {
                     Contact c = iterator.next();
-                    if(c.numbers.size() == 0) iterator.remove();
+                    if (c.numbers.size() == 0) iterator.remove();
                 }
 
                 Collections.sort(contacts);
@@ -144,31 +144,31 @@ public class ContactManager {
     }
 
     public List<String> listNames() {
-        if(contacts == null || contacts.size() == 0) refreshContacts(context);
+        if (contacts == null || contacts.size() == 0) refreshContacts(context);
 
         List<String> names = new ArrayList<>();
-        for(Contact c : contacts) names.add(c.name);
+        for (Contact c : contacts) names.add(c.name);
         return names;
     }
 
     public List<Contact> getContacts() {
-        if(contacts == null || contacts.size() == 0) refreshContacts(context);
+        if (contacts == null || contacts.size() == 0) refreshContacts(context);
 
         return contacts;
     }
 
     public List<String> listNamesAndNumbers() {
-        if(contacts == null || contacts.size() == 0) refreshContacts(context);
+        if (contacts == null || contacts.size() == 0) refreshContacts(context);
 
         List<String> c = new ArrayList<>();
 
-        for(int count = 0; count < contacts.size(); count++) {
+        for (int count = 0; count < contacts.size(); count++) {
             Contact cnt = contacts.get(count);
 
             StringBuilder b = new StringBuilder();
             b.append(cnt.name);
 
-            for(String n : cnt.numbers) {
+            for (String n : cnt.numbers) {
                 b.append(Tuils.NEWLINE);
                 b.append("\t");
                 b.append(n);
@@ -189,11 +189,11 @@ public class ContactManager {
 
     public String[] about(String phone) {
         Cursor mCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                new String[] {ContactsContract.CommonDataKinds.Phone.CONTACT_ID},
-                ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?", new String[] {phone},
+                new String[]{ContactsContract.CommonDataKinds.Phone.CONTACT_ID},
+                ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?", new String[]{phone},
                 null);
 
-        if(mCursor == null || mCursor.getCount() == 0) return null;
+        if (mCursor == null || mCursor.getCount() == 0) return null;
         String[] about = new String[SIZE];
 
         mCursor.moveToNext();
@@ -203,12 +203,12 @@ public class ContactManager {
 
         mCursor.close();
         mCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                new String[] {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.TIMES_CONTACTED, ContactsContract.CommonDataKinds.Phone.LAST_TIME_CONTACTED,
+                new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.TIMES_CONTACTED, ContactsContract.CommonDataKinds.Phone.LAST_TIME_CONTACTED,
                         ContactsContract.CommonDataKinds.Phone.NUMBER},
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[] {id},
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id},
                 null);
 
-        if(mCursor == null || mCursor.getCount() == 0) return null;
+        if (mCursor == null || mCursor.getCount() == 0) return null;
         mCursor.moveToNext();
 
         about[NAME] = mCursor.getString(mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
@@ -221,27 +221,27 @@ public class ContactManager {
             long tempL = mCursor.getLong(mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LAST_TIME_CONTACTED));
 
             timesContacted = tempT > timesContacted ? tempT : timesContacted;
-            if(tempL > 0) lastContacted = tempL < lastContacted ? tempL : lastContacted;
+            if (tempL > 0) lastContacted = tempL < lastContacted ? tempL : lastContacted;
 
             String n = mCursor.getString(mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             about[NUMBERS] = (about[NUMBERS].length() > 0 ? about[NUMBERS] + Tuils.NEWLINE : Tuils.EMPTYSTRING) + n;
         } while (mCursor.moveToNext());
 
         about[TIME_CONTACTED] = String.valueOf(timesContacted);
-        if(lastContacted != Long.MAX_VALUE) {
+        if (lastContacted != Long.MAX_VALUE) {
             long difference = System.currentTimeMillis() - lastContacted;
             long sc = difference / 1000;
-            if(sc < 60) {
+            if (sc < 60) {
                 about[LAST_CONTACTED] = "sec: " + String.valueOf(lastContacted);
             } else {
                 int ms = (int) (sc / 60);
                 sc = ms % 60;
-                if(ms < 60) {
+                if (ms < 60) {
                     about[LAST_CONTACTED] = "min: " + ms + ", sec: " + sc;
                 } else {
                     int h = ms / 60;
                     ms = h % 60;
-                    if(h < 24) {
+                    if (h < 24) {
                         about[LAST_CONTACTED] = "h: " + h + ", min: " + ms + ", sec: " + sc;
                     } else {
                         int days = h / 24;
@@ -256,12 +256,12 @@ public class ContactManager {
     }
 
     public String findNumber(String name) {
-        if(contacts == null) refreshContacts(context);
+        if (contacts == null) refreshContacts(context);
 
-        for(int count = 0; count < contacts.size(); count++) {
+        for (int count = 0; count < contacts.size(); count++) {
             Contact c = contacts.get(count);
-            if(c.name.equalsIgnoreCase(name)) {
-                if(c.numbers.size() > 0) return c.numbers.get(0);
+            if (c.name.equalsIgnoreCase(name)) {
+                if (c.numbers.size() > 0) return c.numbers.get(0);
             }
         }
 
@@ -274,22 +274,22 @@ public class ContactManager {
 
     public Uri fromPhone(String phone) {
         Cursor mCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                new String[] {ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME},
-                ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?", new String[] {phone},
+                new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME},
+                ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?", new String[]{phone},
                 null);
 
-        if(mCursor == null || mCursor.getCount() == 0) return null;
+        if (mCursor == null || mCursor.getCount() == 0) return null;
         mCursor.moveToNext();
 
         String name = mCursor.getString(mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
         mCursor.close();
 
         mCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
-                new String[] {ContactsContract.Contacts.LOOKUP_KEY, ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME},
-                ContactsContract.Contacts.DISPLAY_NAME + " = ?", new String[] {name},
+                new String[]{ContactsContract.Contacts.LOOKUP_KEY, ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME},
+                ContactsContract.Contacts.DISPLAY_NAME + " = ?", new String[]{name},
                 null);
 
-        if(mCursor == null || mCursor.getCount() == 0) return null;
+        if (mCursor == null || mCursor.getCount() == 0) return null;
         mCursor.moveToNext();
 
         String mCurrentLookupKey = mCursor.getString(mCursor.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
@@ -314,7 +314,7 @@ public class ContactManager {
         }
 
         public void setSelectedNumber(int s) {
-            if(s >= numbers.size()) s = 0;
+            if (s >= numbers.size()) s = 0;
             this.selectedNumber = s;
         }
 

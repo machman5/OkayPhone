@@ -3,8 +3,6 @@ package com.crearo.okayphone.commands.main.raw;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
-import java.util.List;
-
 import com.crearo.okayphone.BuildConfig;
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.commands.CommandAbstraction;
@@ -12,6 +10,8 @@ import com.crearo.okayphone.commands.ExecutePack;
 import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.commands.specific.ParamCommand;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.util.List;
 
 /**
  * Created by francescoandreuzzi on 22/08/2017.
@@ -26,25 +26,25 @@ public class devutils extends ParamCommand {
                 List<String> text = pack.getList();
 
                 String title, txt = null;
-                if(text.size() == 0) return null;
+                if (text.size() == 0) return null;
                 else {
                     title = text.remove(0);
-                    if(text.size() >= 2) txt = Tuils.toPlanString(text, Tuils.SPACE);
+                    if (text.size() >= 2) txt = Tuils.toPlanString(text, Tuils.SPACE);
                 }
 
                 NotificationManagerCompat.from(pack.context).notify(200,
                         new NotificationCompat.Builder(pack.context)
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle(title)
-                            .setContentText(txt)
-                            .build());
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setContentTitle(title)
+                                .setContentText(txt)
+                                .build());
 
                 return null;
             }
 
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.TEXTLIST};
+                return new int[]{CommandAbstraction.TEXTLIST};
             }
         },
         check_notifications {

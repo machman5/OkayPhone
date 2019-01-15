@@ -22,7 +22,7 @@ public class notes extends ParamCommand {
         add {
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.PLAIN_TEXT};
+                return new int[]{CommandAbstraction.PLAIN_TEXT};
             }
 
             @Override
@@ -37,7 +37,7 @@ public class notes extends ParamCommand {
         rm {
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.PLAIN_TEXT};
+                return new int[]{CommandAbstraction.PLAIN_TEXT};
             }
 
             @Override
@@ -70,7 +70,7 @@ public class notes extends ParamCommand {
         lock {
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.PLAIN_TEXT};
+                return new int[]{CommandAbstraction.PLAIN_TEXT};
             }
 
             @Override
@@ -86,7 +86,7 @@ public class notes extends ParamCommand {
         unlock {
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.PLAIN_TEXT};
+                return new int[]{CommandAbstraction.PLAIN_TEXT};
             }
 
             @Override
@@ -118,7 +118,7 @@ public class notes extends ParamCommand {
             Param[] ps = values();
             String[] ss = new String[ps.length];
 
-            for(int count = 0; count < ps.length; count++) {
+            for (int count = 0; count < ps.length; count++) {
                 ss[count] = ps[count].label();
             }
 

@@ -22,7 +22,7 @@ public class theme extends ParamCommand {
         apply {
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.PLAIN_TEXT};
+                return new int[]{CommandAbstraction.PLAIN_TEXT};
             }
 
             @Override
@@ -36,7 +36,7 @@ public class theme extends ParamCommand {
         standard {
             @Override
             public int[] args() {
-                return new int[] {};
+                return new int[]{};
             }
 
             @Override
@@ -118,7 +118,9 @@ public class theme extends ParamCommand {
     @Override
     public String[] params() {
         return Param.labels();
-    };
+    }
+
+    ;
 
     @Override
     protected com.crearo.okayphone.commands.main.Param paramForString(MainPack pack, String param) {

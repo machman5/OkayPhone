@@ -3,8 +3,8 @@ package com.crearo.okayphone.commands.main.raw;
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.commands.CommandAbstraction;
 import com.crearo.okayphone.commands.ExecutePack;
-import com.crearo.okayphone.commands.specific.PermanentSuggestionCommand;
 import com.crearo.okayphone.commands.main.MainPack;
+import com.crearo.okayphone.commands.specific.PermanentSuggestionCommand;
 import com.crearo.okayphone.tuils.Tuils;
 
 /**
@@ -24,7 +24,7 @@ public class calc extends PermanentSuggestionCommand {
 
     @Override
     public int[] argType() {
-        return new int[] {CommandAbstraction.PLAIN_TEXT};
+        return new int[]{CommandAbstraction.PLAIN_TEXT};
     }
 
     @Override
@@ -50,6 +50,6 @@ public class calc extends PermanentSuggestionCommand {
 
     @Override
     public String[] permanentSuggestions() {
-        return new String[] {"(", ")", "+", "-", "*", "/", "%", "^", "sqrt"};
+        return new String[]{"(", ")", "+", "-", "*", "/", "%", "^", "sqrt"};
     }
 }

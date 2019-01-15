@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout android:id="@id/input_group"
+    <LinearLayout
+        android:id="@id/input_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="@integer/input_group_weightsum"
@@ -18,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:paddingTop="@dimen/input_padding"/>
+            android:paddingTop="@dimen/input_padding" />
 
         <EditText
             android:id="@+id/input_view"
@@ -44,7 +45,7 @@
             android:background="@null"
             android:src="@drawable/ic_enter"
 
-            android:paddingTop="@dimen/input_padding"/>
+            android:paddingTop="@dimen/input_padding" />
 
     </LinearLayout>
 
@@ -58,7 +59,7 @@
         android:gravity="bottom"
         android:scrollHorizontally="false"
         android:scrollbars="vertical"
-        android:textIsSelectable="true"/>
+        android:textIsSelectable="true" />
 
     <EditText
         android:id="@+id/file_view"
@@ -71,6 +72,6 @@
         android:isScrollContainer="true"
         android:textCursorDrawable="@drawable/cursor"
 
-        android:background="@null"/>
+        android:background="@null" />
 
 </RelativeLayout>

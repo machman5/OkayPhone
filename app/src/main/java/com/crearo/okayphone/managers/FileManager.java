@@ -3,13 +3,13 @@ package com.crearo.okayphone.managers;
 import android.content.Context;
 import android.content.Intent;
 
+import com.crearo.okayphone.tuils.Tuils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-
-import com.crearo.okayphone.tuils.Tuils;
 
 public class FileManager {
 
@@ -131,7 +131,7 @@ public class FileManager {
             return null;
         }
 
-        if(path.trim().equals(ASTERISK)) {
+        if (path.trim().equals(ASTERISK)) {
             return new WildcardInfo(true);
         }
 
@@ -175,7 +175,7 @@ public class FileManager {
         }
 
         public WildcardInfo(boolean all) {
-            if(all) {
+            if (all) {
                 this.allExtensions = all;
                 this.allNames = all;
             }
@@ -193,7 +193,7 @@ public class FileManager {
         @Override
         public boolean accept(File dir, String filename) {
             int dot = filename.lastIndexOf(Tuils.DOT);
-            if(dot == -1) {
+            if (dot == -1) {
                 return false;
             }
 
@@ -213,7 +213,7 @@ public class FileManager {
         @Override
         public boolean accept(File dir, String filename) {
             int dot = filename.lastIndexOf(Tuils.DOT);
-            if(dot == -1) {
+            if (dot == -1) {
                 return false;
             }
 

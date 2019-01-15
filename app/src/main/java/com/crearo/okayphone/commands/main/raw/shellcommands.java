@@ -1,5 +1,10 @@
 package com.crearo.okayphone.commands.main.raw;
 
+import com.crearo.okayphone.R;
+import com.crearo.okayphone.commands.CommandAbstraction;
+import com.crearo.okayphone.commands.ExecutePack;
+import com.crearo.okayphone.tuils.Tuils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,11 +14,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.crearo.okayphone.R;
-import com.crearo.okayphone.commands.CommandAbstraction;
-import com.crearo.okayphone.commands.ExecutePack;
-import com.crearo.okayphone.tuils.Tuils;
 
 /**
  * Created by francescoandreuzzi on 19/04/16.
@@ -49,7 +49,7 @@ public class shellcommands implements CommandAbstraction {
 
         for (String s : path) {
             String[] f = new File(s).list();
-            if(f != null) {
+            if (f != null) {
                 commands.addAll(Arrays.asList(f));
             }
         }

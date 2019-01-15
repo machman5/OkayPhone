@@ -71,11 +71,11 @@ public class Compare {
 //        Tuils.log("min: " + minRate);
 
         List<ComparePack> s = new ArrayList<>();
-        if(allowSkip) {
-            for(char sep : allowed_separators) {
+        if (allowSkip) {
+            for (char sep : allowed_separators) {
                 String[] split = compared.split(String.valueOf(sep));
-                if(split.length > 1) {
-                    for(int count = 1; count < split.length; count++) {
+                if (split.length > 1) {
+                    for (int count = 1; count < split.length; count++) {
                         s.add(new ComparePack(split[count], count, split.length));
                     }
                 }
@@ -85,7 +85,7 @@ public class Compare {
         s.add(new ComparePack(compared, 0, 1));
 
         String unconsidered = unconsideredSymbols.matcher(compared).replaceAll(Tuils.EMPTYSTRING);
-        if(unconsidered.length() != compared.length()) {
+        if (unconsidered.length() != compared.length()) {
             s.add(new ComparePack(unconsidered, 0, 1));
         }
 
@@ -93,7 +93,7 @@ public class Compare {
         int maxRateIndex = -1;
 
         Main:
-        for(ComparePack cmp : s) {
+        for (ComparePack cmp : s) {
 //            Tuils.log("s: " + cmp.s);
 
             int stop = Math.min(cmp.s.length(), comparator.length());
@@ -101,20 +101,20 @@ public class Compare {
             float minus = (float) (0.5 * (comparator.length() / 5));
 
             float rate = 0;
-            for(int i = 0; i < stop; i++) {
+            for (int i = 0; i < stop; i++) {
                 char c1 = cmp.s.charAt(i);
                 char c2 = comparator.charAt(i);
 
 //                Tuils.log("index: " + i);
 
-                if(c1 == c2) {
+                if (c1 == c2) {
 //                    Tuils.log("equals");
                     rate++;
                 } else {
 //                    Tuils.log(c1 + " is not " + c2);
                     rate -= minus;
 
-                    if(rate + (stop - 1 - i) < minRate) {
+                    if (rate + (stop - 1 - i) < minRate) {
 //                        Tuils.log("continue");
                         continue Main;
                     }
@@ -122,7 +122,7 @@ public class Compare {
 //                Tuils.log("rate: " + rate);
             }
 
-            if(rate >= minRate) {
+            if (rate >= minRate) {
                 maxRate = Math.max(maxRate, rate);
                 maxRateIndex = cmp.index;
 //                Tuils.log("maxRate changed");
@@ -140,7 +140,7 @@ public class Compare {
 //        n++;
 
         int r = Math.round(maxRate);
-        if(r == comparator.length() && maxRateIndex == 0) {
+        if (r == comparator.length() && maxRateIndex == 0) {
             return maximum;
         }
         return r;
@@ -175,11 +175,11 @@ public class Compare {
 //        Tuils.log("min: " + minRate);
 
         List<ComparePack> s = new ArrayList<>();
-        if(allowSkip) {
-            for(char sep : allowed_separators) {
+        if (allowSkip) {
+            for (char sep : allowed_separators) {
                 String[] split = compared.split(String.valueOf(sep));
-                if(split.length > 1) {
-                    for(int count = 1; count < split.length; count++) {
+                if (split.length > 1) {
+                    for (int count = 1; count < split.length; count++) {
                         s.add(new ComparePack(split[count], count, split.length));
                     }
                 }
@@ -189,7 +189,7 @@ public class Compare {
         s.add(new ComparePack(compared, 0, 1));
 
         String unconsidered = unconsideredSymbols.matcher(compared).replaceAll(Tuils.EMPTYSTRING);
-        if(unconsidered.length() != compared.length()) {
+        if (unconsidered.length() != compared.length()) {
             s.add(new ComparePack(unconsidered, 0, 1));
         }
 
@@ -197,7 +197,7 @@ public class Compare {
         int maxRateIndex = -1;
 
         Main:
-        for(ComparePack cmp : s) {
+        for (ComparePack cmp : s) {
 //            Tuils.log("s: " + cmp.s);
 
             int stop = Math.min(cmp.s.length(), comparator.length());
@@ -205,20 +205,20 @@ public class Compare {
             float minus = (float) (0.5 * (comparator.length() / 5));
 
             float rate = 0;
-            for(int i = 0; i < stop; i++) {
+            for (int i = 0; i < stop; i++) {
                 char c1 = cmp.s.charAt(i);
                 char c2 = comparator.charAt(i);
 
 //                Tuils.log("index: " + i);
 
-                if(c1 == c2) {
+                if (c1 == c2) {
 //                    Tuils.log("equals");
                     rate++;
                 } else {
 //                    Tuils.log(c1 + " is not " + c2);
                     rate -= minus;
 
-                    if(rate + (stop - 1 - i) < minRate) {
+                    if (rate + (stop - 1 - i) < minRate) {
 //                        Tuils.log("continue");
                         continue Main;
                     }
@@ -226,7 +226,7 @@ public class Compare {
 //                Tuils.log("rate: " + rate);
             }
 
-            if(rate >= minRate) {
+            if (rate >= minRate) {
                 maxRate = Math.max(maxRate, rate);
                 maxRateIndex = cmp.index;
 //                Tuils.log("maxRate changed");
@@ -244,8 +244,8 @@ public class Compare {
 //        n++;
 
         int r = Math.round(maxRate);
-        if(r < minimum) throw new CompareStringLowerThanMinimumException();
-        if(r == comparator.length() && maxRateIndex == 0) {
+        if (r < minimum) throw new CompareStringLowerThanMinimumException();
+        if (r == comparator.length() && maxRateIndex == 0) {
             return maximum;
         }
         return r;
@@ -256,20 +256,19 @@ public class Compare {
     }
 
 
-
-
     public static List<SimpleMutableEntry<String, Integer>> compareWithRates(int minimum, List<String> compared, String comparator, boolean allowSkip, int maximum, boolean sort) {
         List<SimpleMutableEntry<String, Integer>> ms = new ArrayList<>();
 
-        for(String s : compared) {
-            if(Thread.currentThread().isInterrupted()) return ms;
+        for (String s : compared) {
+            if (Thread.currentThread().isInterrupted()) return ms;
 
             try {
                 ms.add(new SimpleMutableEntry<>(s, compare(minimum, s, comparator, allowSkip, maximum)));
-            } catch (CompareStringLowerThanMinimumException e) {}
+            } catch (CompareStringLowerThanMinimumException e) {
+            }
         }
 
-        if(sort) {
+        if (sort) {
             Collections.sort(ms, entryComparator);
         }
 
@@ -279,13 +278,13 @@ public class Compare {
     public static List<SimpleMutableEntry<String, Integer>> compareWithRates(List<String> compared, String comparator, boolean allowSkip, int maximum, boolean sort) {
         List<SimpleMutableEntry<String, Integer>> ms = new ArrayList<>();
 
-        for(String s : compared) {
-            if(Thread.currentThread().isInterrupted()) return ms;
+        for (String s : compared) {
+            if (Thread.currentThread().isInterrupted()) return ms;
 
             ms.add(new SimpleMutableEntry<>(s, compare(s, comparator, allowSkip, maximum)));
         }
 
-        if(sort) {
+        if (sort) {
             Collections.sort(ms, entryComparator);
         }
 
@@ -319,15 +318,16 @@ public class Compare {
     public static List<SimpleMutableEntry<Stringable, Integer>> compareWithRates(int minimum, List<? extends Stringable> compared, boolean allowSkip, String comparator, int maximum, boolean sort) {
         List<SimpleMutableEntry<Stringable, Integer>> ms = new ArrayList<>();
 
-        for(Stringable s : compared) {
-            if(Thread.currentThread().isInterrupted()) return ms;
+        for (Stringable s : compared) {
+            if (Thread.currentThread().isInterrupted()) return ms;
 
             try {
                 ms.add(new SimpleMutableEntry<>(s, compare(minimum, s.getString(), comparator, allowSkip, maximum)));
-            } catch (CompareStringLowerThanMinimumException e) {}
+            } catch (CompareStringLowerThanMinimumException e) {
+            }
         }
 
-        if(sort) {
+        if (sort) {
             Collections.sort(ms, entryComparator);
         }
 
@@ -337,13 +337,13 @@ public class Compare {
     public static List<SimpleMutableEntry<Stringable, Integer>> compareWithRates(List<? extends Stringable> compared, boolean allowSkip, String comparator, int maximum, boolean sort) {
         List<SimpleMutableEntry<Stringable, Integer>> ms = new ArrayList<>();
 
-        for(Stringable s : compared) {
-            if(Thread.currentThread().isInterrupted()) return ms;
+        for (Stringable s : compared) {
+            if (Thread.currentThread().isInterrupted()) return ms;
 
             ms.add(new SimpleMutableEntry<>(s, compare(s.getString(), comparator, allowSkip, maximum)));
         }
 
-        if(sort) {
+        if (sort) {
             Collections.sort(ms, entryComparator);
         }
 
@@ -363,28 +363,25 @@ public class Compare {
     }
 
 
-
-
     public static List<String> compareList(int minimum, List<String> compared, String comparator, boolean allowSkip, int maximum, boolean sort) {
         List<String> ms = new ArrayList<>();
-        if(!sort) {
+        if (!sort) {
             for (String s : compared) {
                 if (Thread.currentThread().isInterrupted()) return ms;
 
                 try {
                     compare(minimum, s, comparator, allowSkip, maximum);
                     ms.add(s);
-                } catch (CompareStringLowerThanMinimumException e) {}
+                } catch (CompareStringLowerThanMinimumException e) {
+                }
             }
         } else {
             List<SimpleMutableEntry<String, Integer>> list = compareWithRates(minimum, compared, comparator, allowSkip, maximum, sort);
-            for(SimpleMutableEntry<String, Integer> s : list) ms.add(s.getKey());
+            for (SimpleMutableEntry<String, Integer> s : list) ms.add(s.getKey());
         }
 
         return ms;
     }
-
-
 
 
     private static class ComparePack {
@@ -404,5 +401,6 @@ public class Compare {
         String getString();
     }
 
-    public static class CompareStringLowerThanMinimumException extends Exception {}
+    public static class CompareStringLowerThanMinimumException extends Exception {
+    }
 }

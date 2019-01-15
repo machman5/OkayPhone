@@ -37,7 +37,7 @@ public class location implements APICommand, CommandAbstraction {
         }
 
         final MainPack main = ((MainPack) pack);
-        if(main.locationManager == null) {
+        if (main.locationManager == null) {
             main.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         }
 

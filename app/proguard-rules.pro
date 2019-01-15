@@ -1,13 +1,13 @@
--keep public class ohi.andre.consolelauncher.commands.main.raw.* { public *; }
--keep public abstract class ohi.andre.consolelauncher.commands.main.generals.* { public *; }
--keep public class ohi.andre.consolelauncher.commands.tuixt.raw.* { public *; }
+-keep public class com.crearo.okayphone.commands.main.raw.* { public *; }
+-keep public abstract class com.crearo.okayphone.commands.main.generals.* { public *; }
+-keep public class com.crearo.okayphone.commands.tuixt.raw.* { public *; }
 
--keep public class ohi.andre.consolelauncher.managers.notifications.NotificationService
--keep public class ohi.andre.consolelauncher.managers.notifications.KeeperService
+-keep public class com.crearo.okayphone.managers.notifications.NotificationService
+-keep public class com.crearo.okayphone.managers.notifications.KeeperService
 
--keep public class ohi.andre.consolelauncher.managers.options.**
+-keep public class com.crearo.okayphone.managers.options.**
 
--dontwarn ohi.andre.consolelauncher.commands.main.raw.**
+-dontwarn com.crearo.okayphone.commands.main.raw.**
 
 -dontwarn javax.annotation.**
 -dontwarn javax.inject.**

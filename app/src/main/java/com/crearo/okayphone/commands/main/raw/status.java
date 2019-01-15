@@ -6,13 +6,13 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import java.lang.reflect.Method;
-
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.commands.CommandAbstraction;
 import com.crearo.okayphone.commands.ExecutePack;
 import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by francescoandreuzzi on 05/04/16.
@@ -47,7 +47,8 @@ public class status implements CommandAbstraction {
             method.setAccessible(true);
 
             mobileOn = (Boolean) method.invoke(connManager);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
 
         return info.res.getString(R.string.battery_charge) + Tuils.SPACE + (int) level + PERCENTAGE + Tuils.NEWLINE +

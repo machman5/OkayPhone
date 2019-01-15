@@ -3,6 +3,5 @@
     android:shape="rectangle">
 
     <solid android:color="#FFFFFFFF" />
-    <size
-        android:width="@dimen/cursor_width"/>
+    <size android:width="@dimen/cursor_width" />
 </shape>

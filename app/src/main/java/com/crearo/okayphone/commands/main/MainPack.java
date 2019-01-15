@@ -6,9 +6,6 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 
-import java.io.File;
-import java.lang.reflect.Method;
-
 import com.crearo.okayphone.commands.CommandGroup;
 import com.crearo.okayphone.commands.CommandsPreferences;
 import com.crearo.okayphone.commands.ExecutePack;
@@ -22,6 +19,10 @@ import com.crearo.okayphone.managers.xml.XMLPrefsManager;
 import com.crearo.okayphone.managers.xml.options.Behavior;
 import com.crearo.okayphone.tuils.interfaces.Redirectator;
 import com.crearo.okayphone.tuils.libsuperuser.ShellHolder;
+
+import java.io.File;
+import java.lang.reflect.Method;
+
 import okhttp3.OkHttpClient;
 
 /**
@@ -97,13 +98,13 @@ public class MainPack extends ExecutePack {
 
     public void dispose() {
         TorchManager mgr = TorchManager.getInstance();
-        if(mgr.isOn()) mgr.turnOff();
+        if (mgr.isOn()) mgr.turnOff();
     }
 
     public void destroy() {
-        if(player != null) player.destroy();
+        if (player != null) player.destroy();
         appsManager.onDestroy();
-        if(rssManager != null) rssManager.dispose();
+        if (rssManager != null) rssManager.dispose();
         contacts.destroy(context);
     }
 }

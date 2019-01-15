@@ -32,7 +32,7 @@ public class StreamGobbler extends Thread {
     public interface OnLineListener {
         /**
          * <p>Line callback</p>
-         *
+         * <p>
          * <p>This callback should process the line as quickly as possible.
          * Delays in this callback may pause the native process or even
          * result in a deadlock</p>
@@ -49,7 +49,7 @@ public class StreamGobbler extends Thread {
 
     /**
      * <p>StreamGobbler constructor</p>
-     *
+     * <p>
      * <p>We use this class because shell STDOUT and STDERR should be read as quickly as
      * possible to prevent a deadlock from occurring, or Process.waitFor() never
      * returning (as the buffer is full, pausing the native process)</p>
@@ -66,7 +66,7 @@ public class StreamGobbler extends Thread {
 
     /**
      * <p>StreamGobbler constructor</p>
-     *
+     * <p>
      * <p>We use this class because shell STDOUT and STDERR should be read as quickly as
      * possible to prevent a deadlock from occurring, or Process.waitFor() never
      * returning (as the buffer is full, pausing the native process)</p>

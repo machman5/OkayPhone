@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import java.util.List;
-
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.commands.CommandAbstraction;
 import com.crearo.okayphone.commands.ExecutePack;
@@ -14,6 +12,8 @@ import com.crearo.okayphone.commands.specific.ParamCommand;
 import com.crearo.okayphone.managers.xml.classes.XMLPrefsSave;
 import com.crearo.okayphone.managers.xml.options.Cmd;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.util.List;
 
 public class search extends ParamCommand {
 
@@ -32,7 +32,7 @@ public class search extends ParamCommand {
                 return playstore(args, pack.context);
             }
         },
-//        file {
+        //        file {
 //            @Override
 //            public String exec(ExecutePack pack) {
 //                List<String> args = pack.get(ArrayList.class, 1);
@@ -71,7 +71,7 @@ public class search extends ParamCommand {
 
         @Override
         public int[] args() {
-            return new int[] {CommandAbstraction.TEXTLIST};
+            return new int[]{CommandAbstraction.TEXTLIST};
         }
 
         static Param get(String p) {

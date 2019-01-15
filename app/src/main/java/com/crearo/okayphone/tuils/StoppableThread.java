@@ -7,6 +7,7 @@ package com.crearo.okayphone.tuils;
 public class StoppableThread extends Thread {
 
     private volatile boolean stopped = false;
+
     public StoppableThread() {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
             @Override

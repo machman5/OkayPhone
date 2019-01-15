@@ -8,8 +8,6 @@ import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import java.util.List;
-
 import com.crearo.okayphone.LauncherActivity;
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.commands.CommandAbstraction;
@@ -18,6 +16,8 @@ import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.commands.specific.ParamCommand;
 import com.crearo.okayphone.managers.ContactManager;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.util.List;
 
 /**
  * Created by francescoandreuzzi on 11/05/2017.
@@ -69,7 +69,7 @@ public class cntcts extends ParamCommand {
 
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.CONTACTNUMBER};
+                return new int[]{CommandAbstraction.CONTACTNUMBER};
             }
 
             @Override
@@ -89,7 +89,7 @@ public class cntcts extends ParamCommand {
 
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.CONTACTNUMBER};
+                return new int[]{CommandAbstraction.CONTACTNUMBER};
             }
 
             @Override
@@ -113,7 +113,7 @@ public class cntcts extends ParamCommand {
 
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.CONTACTNUMBER};
+                return new int[]{CommandAbstraction.CONTACTNUMBER};
             }
 
             @Override

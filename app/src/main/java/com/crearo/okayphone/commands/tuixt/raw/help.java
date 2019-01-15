@@ -1,16 +1,16 @@
 package com.crearo.okayphone.commands.tuixt.raw;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.commands.CommandAbstraction;
 import com.crearo.okayphone.commands.ExecutePack;
 import com.crearo.okayphone.commands.tuixt.TuixtPack;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by francescoandreuzzi on 24/01/2017.
@@ -29,7 +29,7 @@ public class help implements CommandAbstraction {
 
     @Override
     public int[] argType() {
-        return new int[] {CommandAbstraction.COMMAND};
+        return new int[]{CommandAbstraction.COMMAND};
     }
 
     @Override

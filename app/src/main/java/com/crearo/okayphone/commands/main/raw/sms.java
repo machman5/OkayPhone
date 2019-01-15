@@ -31,7 +31,7 @@ public class sms extends RedirectCommand {
 
         beforeObjects.add(pack.getString());
 
-        if(afterObjects.size() == 0) {
+        if (afterObjects.size() == 0) {
             info.redirectator.prepareRedirection(this);
         } else {
             return onRedirect(info);
@@ -42,7 +42,7 @@ public class sms extends RedirectCommand {
 
     @Override
     public int[] argType() {
-        return new int[] {CommandAbstraction.CONTACTNUMBER};
+        return new int[]{CommandAbstraction.CONTACTNUMBER};
     }
 
     @Override
@@ -72,7 +72,7 @@ public class sms extends RedirectCommand {
 
         String number = (String) beforeObjects.get(0);
         String message = (String) afterObjects.get(0);
-        if(message.length() == 0) {
+        if (message.length() == 0) {
             info.redirectator.cleanup();
             return info.res.getString(R.string.output_smsnotsent);
         }

@@ -3,6 +3,18 @@ package com.crearo.okayphone.managers.xml;
 import android.content.Context;
 import android.graphics.Color;
 
+import com.crearo.okayphone.R;
+import com.crearo.okayphone.managers.xml.classes.XMLPrefsElement;
+import com.crearo.okayphone.managers.xml.classes.XMLPrefsList;
+import com.crearo.okayphone.managers.xml.classes.XMLPrefsSave;
+import com.crearo.okayphone.managers.xml.options.Behavior;
+import com.crearo.okayphone.managers.xml.options.Cmd;
+import com.crearo.okayphone.managers.xml.options.Suggestions;
+import com.crearo.okayphone.managers.xml.options.Theme;
+import com.crearo.okayphone.managers.xml.options.Toolbar;
+import com.crearo.okayphone.managers.xml.options.Ui;
+import com.crearo.okayphone.tuils.Tuils;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,18 +37,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.crearo.okayphone.R;
-import com.crearo.okayphone.managers.xml.classes.XMLPrefsElement;
-import com.crearo.okayphone.managers.xml.classes.XMLPrefsList;
-import com.crearo.okayphone.managers.xml.classes.XMLPrefsSave;
-import com.crearo.okayphone.managers.xml.options.Behavior;
-import com.crearo.okayphone.managers.xml.options.Cmd;
-import com.crearo.okayphone.managers.xml.options.Suggestions;
-import com.crearo.okayphone.managers.xml.options.Theme;
-import com.crearo.okayphone.managers.xml.options.Toolbar;
-import com.crearo.okayphone.managers.xml.options.Ui;
-import com.crearo.okayphone.tuils.Tuils;
-
 public class XMLPrefsManager {
 
     public static final String XML_DEFAULT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -49,7 +49,8 @@ public class XMLPrefsManager {
         factory = DocumentBuilderFactory.newInstance();
         try {
             builder = factory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {}
+        } catch (ParserConfigurationException e) {
+        }
     }
 
     public enum XMLPrefsRoot implements XMLPrefsElement {
@@ -57,37 +58,37 @@ public class XMLPrefsManager {
         THEME("theme.xml", Theme.values()) {
             @Override
             public String[] deleted() {
-                return new String[] {"notes_unlocked_color"};
+                return new String[]{"notes_unlocked_color"};
             }
         },
         CMD("cmd.xml", Cmd.values()) {
             @Override
             public String[] deleted() {
-                return new String[] {};
+                return new String[]{};
             }
         },
         TOOLBAR("toolbar.xml", Toolbar.values()) {
             @Override
             public String[] deleted() {
-                return new String[] {};
+                return new String[]{};
             }
         },
         UI("ui.xml", Ui.values()) {
             @Override
             public String[] deleted() {
-                return new String[] {};
+                return new String[]{};
             }
         },
         BEHAVIOR("behavior.xml", Behavior.values()) {
             @Override
             public String[] deleted() {
-                return new String[] {};
+                return new String[]{};
             }
         },
         SUGGESTIONS("suggestions.xml", Suggestions.values()) {
             @Override
             public String[] deleted() {
-                return new String[] {};
+                return new String[]{};
             }
         };
 
@@ -108,7 +109,7 @@ public class XMLPrefsManager {
 
         @Override
         public void write(XMLPrefsSave save, String value) {
-            set(new File(Tuils.getFolder(), path), save.label(), new String[] {VALUE_ATTRIBUTE}, new String[] {value});
+            set(new File(Tuils.getFolder(), path), save.label(), new String[]{VALUE_ATTRIBUTE}, new String[]{value});
         }
 
         public XMLPrefsList getValues() {
@@ -116,37 +117,39 @@ public class XMLPrefsManager {
         }
     }
 
-    private XMLPrefsManager() {}
+    private XMLPrefsManager() {
+    }
 
     public static void dispose() {
         commonsLoaded = false;
 
-        for(XMLPrefsRoot element : XMLPrefsRoot.values()) {
+        for (XMLPrefsRoot element : XMLPrefsRoot.values()) {
             element.values.list.clear();
         }
     }
 
     static boolean commonsLoaded = false;
+
     public static void loadCommons(Context context) {
-        if(commonsLoaded) return;
+        if (commonsLoaded) return;
         commonsLoaded = true;
 
         File folder = Tuils.getFolder();
-        if(folder == null) {
+        if (folder == null) {
             Tuils.sendOutput(Color.RED, context, R.string.tuinotfound_xmlprefs);
             return;
         }
 
-        for(XMLPrefsRoot element : XMLPrefsRoot.values()) {
+        for (XMLPrefsRoot element : XMLPrefsRoot.values()) {
             File file = new File(folder, element.path);
-            if(!file.exists()) {
+            if (!file.exists()) {
                 resetFile(file, element.name());
             }
 
             Object[] o;
             try {
                 o = buildDocument(file, element.name());
-                if(o == null) {
+                if (o == null) {
                     Tuils.sendXMLParseError(context, element.path);
                     return;
                 }
@@ -166,16 +169,17 @@ public class XMLPrefsManager {
             String[] deleted = element.deleted();
             boolean needToWrite = false;
 
-            if(root == null) {
+            if (root == null) {
                 resetFile(file, element.name());
                 try {
                     d = builder.parse(file);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
                 root = (Element) d.getElementsByTagName(element.name()).item(0);
             }
             NodeList nodes = root.getElementsByTagName("*");
 
-            for(int count = 0; count < nodes.getLength(); count++) {
+            for (int count = 0; count < nodes.getLength(); count++) {
                 Node node = nodes.item(count);
                 String nn = node.getNodeName();
 
@@ -189,17 +193,17 @@ public class XMLPrefsManager {
                 element.values.add(nn, value);
 
                 boolean check = false;
-                for(int en = 0; en < enums.size(); en++) {
-                    if(enums.get(en).label().equals(nn)) {
+                for (int en = 0; en < enums.size(); en++) {
+                    if (enums.get(en).label().equals(nn)) {
                         enums.remove(en);
                         check = true;
                         break;
                     }
                 }
 
-                if(!check && deleted != null) {
+                if (!check && deleted != null) {
                     int index = Tuils.find(nn, deleted);
-                    if(index != -1) {
+                    if (index != -1) {
                         deleted[index] = null;
                         Element e = (Element) node;
                         root.removeChild(e);
@@ -209,12 +213,12 @@ public class XMLPrefsManager {
                 }
             }
 
-            if(enums.size() == 0) {
-                if(needToWrite) writeTo(d, file);
+            if (enums.size() == 0) {
+                if (needToWrite) writeTo(d, file);
                 continue;
             }
 
-            for(XMLPrefsSave s : enums) {
+            for (XMLPrefsSave s : enums) {
                 String value = s.defaultValue();
 
                 Element em = d.createElement(s.label());
@@ -229,19 +233,19 @@ public class XMLPrefsManager {
     }
 
     public static Object transform(String s, Class<?> c) throws Exception {
-        if(s == null) throw new UnsupportedOperationException();
+        if (s == null) throw new UnsupportedOperationException();
 
-        if(c == int.class) return Integer.parseInt(s);
-        if(c == Color.class) return Color.parseColor(s);
-        if(c == boolean.class) return Boolean.parseBoolean(s);
-        if(c == String.class) return s;
-        if(c == float.class) return Float.parseFloat(s);
-        if(c == double.class) return Double.parseDouble(s);
-        if(c == File.class) {
-            if(s.length() == 0) return null;
+        if (c == int.class) return Integer.parseInt(s);
+        if (c == Color.class) return Color.parseColor(s);
+        if (c == boolean.class) return Boolean.parseBoolean(s);
+        if (c == String.class) return s;
+        if (c == float.class) return Float.parseFloat(s);
+        if (c == double.class) return Double.parseDouble(s);
+        if (c == File.class) {
+            if (s.length() == 0) return null;
 
             File file = new File(s);
-            if(!file.exists()) throw new UnsupportedOperationException();
+            if (!file.exists()) throw new UnsupportedOperationException();
 
             return file;
         }
@@ -266,13 +270,13 @@ public class XMLPrefsManager {
     }
 
     public static int getColor(XMLPrefsSave prefsSave) {
-        if(prefsSave.parent() == null) return Integer.MAX_VALUE;
+        if (prefsSave.parent() == null) return Integer.MAX_VALUE;
 
         try {
             return (int) transform(prefsSave.parent().getValues().get(prefsSave).value, Color.class);
         } catch (Exception e) {
             String def = prefsSave.defaultValue();
-            if(def == null || def.length() == 0) {
+            if (def == null || def.length() == 0) {
                 return Integer.MAX_VALUE;
             }
 
@@ -325,10 +329,10 @@ public class XMLPrefsManager {
     }
 
     static final Pattern p1 = Pattern.compile(">");
-//    static final Pattern p2 = Pattern.compile("</");
+    //    static final Pattern p2 = Pattern.compile("</");
     static final Pattern p3 = Pattern.compile("\n\n");
     static final String p1s = ">" + Tuils.NEWLINE;
-//    static final String p2s = "\n</";
+    //    static final String p2s = "\n</";
     static final String p3s = Tuils.NEWLINE;
 
     public static String fixNewlines(String s) {
@@ -338,11 +342,11 @@ public class XMLPrefsManager {
         return s;
     }
 
-//    rootName is needed in order to rebuild the file if it's corrupted
+    //    rootName is needed in order to rebuild the file if it's corrupted
 //    [0] = document
 //    [1] = root
     public static Object[] buildDocument(File file, String rootName) throws Exception {
-        if(!file.exists()) {
+        if (!file.exists()) {
             resetFile(file, rootName);
         }
 
@@ -353,14 +357,14 @@ public class XMLPrefsManager {
             Tuils.log(e);
 
             int nOfBytes = Tuils.nOfBytes(file);
-            if(nOfBytes == 0 && rootName != null) {
+            if (nOfBytes == 0 && rootName != null) {
                 XMLPrefsManager.resetFile(file, rootName);
                 d = builder.parse(file);
             } else return null;
         }
 
         Element r = d.getDocumentElement();
-        return new Object[] {d, r};
+        return new Object[]{d, r};
     }
 
     public static void writeTo(Document d, File f) {
@@ -385,13 +389,13 @@ public class XMLPrefsManager {
         }
     }
 
-//    this will only add, it won't check if there's already one
+    //    this will only add, it won't check if there's already one
     public static String add(File file, String elementName, String[] attributeNames, String[] attributeValues) {
         try {
             Object[] o;
             try {
                 o = buildDocument(file, null);
-                if(o == null) return Tuils.EMPTYSTRING;
+                if (o == null) return Tuils.EMPTYSTRING;
             } catch (Exception e) {
                 Tuils.log(e);
                 return e.toString();
@@ -401,8 +405,8 @@ public class XMLPrefsManager {
             Element root = (Element) o[1];
 
             Element element = d.createElement(elementName);
-            for(int c = 0; c < attributeNames.length; c++) {
-                if(attributeValues[c] == null) continue;
+            for (int c = 0; c < attributeNames.length; c++) {
+                if (attributeValues[c] == null) continue;
                 element.setAttribute(attributeNames[c], attributeValues[c]);
             }
             root.appendChild(element);
@@ -423,7 +427,7 @@ public class XMLPrefsManager {
         String[][] values = new String[1][attributeValues.length];
         values[0] = attributeValues;
 
-        return setMany(file, new String[] {elementName}, thatHasThose, forValues, attributeNames, values, addIfNotFound);
+        return setMany(file, new String[]{elementName}, thatHasThose, forValues, attributeNames, values, addIfNotFound);
     }
 
     public static String setMany(File file, String elementNames[], String[] attributeNames, String[][] attributeValues) {
@@ -435,7 +439,7 @@ public class XMLPrefsManager {
             Object[] o;
             try {
                 o = buildDocument(file, null);
-                if(o == null) return Tuils.EMPTYSTRING;
+                if (o == null) return Tuils.EMPTYSTRING;
             } catch (Exception e) {
                 Tuils.log(e);
                 return e.toString();
@@ -444,29 +448,29 @@ public class XMLPrefsManager {
             Document d = (Document) o[0];
             Element root = (Element) o[1];
 
-            if(d == null || root == null) {
+            if (d == null || root == null) {
                 return Tuils.EMPTYSTRING;
             }
 
             int nFound = 0;
 
             Main:
-            for(int c = 0; c < elementNames.length; c++) {
+            for (int c = 0; c < elementNames.length; c++) {
                 NodeList nodes = root.getElementsByTagName(elementNames[c]);
 
                 Nodes:
-                for(int j = 0; j < nodes.getLength(); j++) {
+                for (int j = 0; j < nodes.getLength(); j++) {
                     Node n = nodes.item(j);
-                    if(n.getNodeType() == Node.ELEMENT_NODE) {
+                    if (n.getNodeType() == Node.ELEMENT_NODE) {
                         Element e = (Element) n;
 
-                        if(!checkAttributes(e, thatHasThose, forValues, false)) {
+                        if (!checkAttributes(e, thatHasThose, forValues, false)) {
                             continue Nodes;
                         }
 
                         nFound++;
 
-                        for(int a = 0; a < attributeNames.length; a++) {
+                        for (int a = 0; a < attributeNames.length; a++) {
                             e.setAttribute(attributeNames[a], attributeValues[c][a]);
                         }
 
@@ -477,7 +481,7 @@ public class XMLPrefsManager {
                 }
             }
 
-            if(nFound < elementNames.length) {
+            if (nFound < elementNames.length) {
                 for (int count = 0; count < elementNames.length; count++) {
                     if (elementNames[count] == null || elementNames[count].length() == 0) continue;
 
@@ -494,7 +498,7 @@ public class XMLPrefsManager {
 
             writeTo(d, file);
 
-            if(nFound == 0) return Tuils.EMPTYSTRING;
+            if (nFound == 0) return Tuils.EMPTYSTRING;
             return null;
         } catch (Exception e) {
             Tuils.log(e);
@@ -503,7 +507,7 @@ public class XMLPrefsManager {
         }
     }
 
-//    return "" if node not found, null if all good
+    //    return "" if node not found, null if all good
     public static String removeNode(File file, String nodeName) {
         return removeNode(file, nodeName, null, null);
     }
@@ -513,7 +517,7 @@ public class XMLPrefsManager {
             Object[] o;
             try {
                 o = buildDocument(file, null);
-                if(o == null) return Tuils.EMPTYSTRING;
+                if (o == null) return Tuils.EMPTYSTRING;
             } catch (Exception e) {
                 return e.toString();
             }
@@ -522,7 +526,7 @@ public class XMLPrefsManager {
             Element root = (Element) o[1];
 
             Node n = findNode(root, nodeName, thatHasThose, forValues);
-            if(n == null) return Tuils.EMPTYSTRING;
+            if (n == null) return Tuils.EMPTYSTRING;
 
             root.removeChild(n);
             writeTo(d, file);
@@ -534,7 +538,7 @@ public class XMLPrefsManager {
     }
 
     public static String removeNode(File file, String[] thatHasThose, String[] forValues) {
-        return removeNode(file, thatHasThose, forValues, false,false);
+        return removeNode(file, thatHasThose, forValues, false, false);
     }
 
     public static String removeNode(File file, String[] thatHasThose, String[] forValues, boolean alsoNotFound, boolean all) {
@@ -542,7 +546,7 @@ public class XMLPrefsManager {
             Object[] o;
             try {
                 o = buildDocument(file, null);
-                if(o == null) return Tuils.EMPTYSTRING;
+                if (o == null) return Tuils.EMPTYSTRING;
             } catch (Exception e) {
                 return e.toString();
             }
@@ -554,16 +558,16 @@ public class XMLPrefsManager {
 
             boolean check = false;
 
-            for(int c = 0; c < list.getLength(); c++) {
+            for (int c = 0; c < list.getLength(); c++) {
                 Node n = list.item(c);
 
-                if(!(n instanceof Element)) continue;
+                if (!(n instanceof Element)) continue;
                 Element e = (Element) n;
 
-                if(checkAttributes(e, thatHasThose, forValues, alsoNotFound)) {
+                if (checkAttributes(e, thatHasThose, forValues, alsoNotFound)) {
                     check = true;
                     root.removeChild(n);
-                    if(!all) break;
+                    if (!all) break;
                 }
             }
 
@@ -584,7 +588,7 @@ public class XMLPrefsManager {
             Object[] o;
             try {
                 o = buildDocument(file, null);
-                if(o == null) return null;
+                if (o == null) return null;
             } catch (Exception e) {
                 return null;
             }
@@ -597,10 +601,12 @@ public class XMLPrefsManager {
         }
     }
 
-//    useful only if you're looking for a single node
+    //    useful only if you're looking for a single node
     public static Node findNode(Element root, String nodeName, String[] thatHasThose, String[] forValues) {
         NodeList nodes = root.getElementsByTagName(nodeName);
-        for(int j = 0; j < nodes.getLength(); j++) if(checkAttributes((Element) nodes.item(j), thatHasThose, forValues, false)) return nodes.item(j);
+        for (int j = 0; j < nodes.getLength(); j++)
+            if (checkAttributes((Element) nodes.item(j), thatHasThose, forValues, false))
+                return nodes.item(j);
         return null;
     }
 
@@ -613,13 +619,13 @@ public class XMLPrefsManager {
 
         List<Node> nodeList = new ArrayList<>();
 
-        for(int c = 0; c < nodes.getLength(); c++) {
+        for (int c = 0; c < nodes.getLength(); c++) {
             Node n = nodeList.get(c);
 
-            if(!(n instanceof Element)) continue;
+            if (!(n instanceof Element)) continue;
             Element e = (Element) n;
 
-            if(checkAttributes(e, thatHasThose, forValue, false)) {
+            if (checkAttributes(e, thatHasThose, forValue, false)) {
                 nodeList.add(n);
             }
         }
@@ -636,8 +642,8 @@ public class XMLPrefsManager {
     }
 
     public static String attrValue(File file, String nodeName, String[] thatHasThose, String[] forValues, String attrName) {
-        String[] vs = attrValues(file, nodeName, thatHasThose, forValues, new String[] {attrName});
-        if(vs != null && vs.length > 0) return vs[0];
+        String[] vs = attrValues(file, nodeName, thatHasThose, forValues, new String[]{attrName});
+        if (vs != null && vs.length > 0) return vs[0];
         return null;
     }
 
@@ -650,7 +656,7 @@ public class XMLPrefsManager {
             Object[] o;
             try {
                 o = buildDocument(file, null);
-                if(o == null) return null;
+                if (o == null) return null;
             } catch (Exception e) {
                 return null;
             }
@@ -658,27 +664,29 @@ public class XMLPrefsManager {
             Element root = (Element) o[1];
             NodeList nodes = root.getElementsByTagName(nodeName);
 
-            for(int count = 0; count < nodes.getLength(); count++) {
+            for (int count = 0; count < nodes.getLength(); count++) {
                 Node node = nodes.item(count);
                 Element e = (Element) node;
 
-                if(!checkAttributes(e, thatHasThose, forValues, false)) continue;
+                if (!checkAttributes(e, thatHasThose, forValues, false)) continue;
 
                 String[] values = new String[attrNames.length];
-                for(int c = 0; c < attrNames.length; c++) values[count] = e.getAttribute(attrNames[c]);
+                for (int c = 0; c < attrNames.length; c++)
+                    values[count] = e.getAttribute(attrNames[c]);
 
                 return values;
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         return null;
     }
 
     private static boolean checkAttributes(Element e, String[] thatHasThose, String[] forValues, boolean alsoIfAttributeNotFound) {
-        if(thatHasThose != null && forValues != null && thatHasThose.length == forValues.length) {
-            for(int a = 0; a < thatHasThose.length; a++) {
-                if(!e.hasAttribute(thatHasThose[a])) return alsoIfAttributeNotFound;
-                if(!forValues[a].equals(e.getAttribute(thatHasThose[a]))) return false;
+        if (thatHasThose != null && forValues != null && thatHasThose.length == forValues.length) {
+            for (int a = 0; a < thatHasThose.length; a++) {
+                if (!e.hasAttribute(thatHasThose[a])) return alsoIfAttributeNotFound;
+                if (!forValues[a].equals(e.getAttribute(thatHasThose[a]))) return false;
             }
         }
         return true;
@@ -686,7 +694,7 @@ public class XMLPrefsManager {
 
     public static boolean resetFile(File f, String name) {
         try {
-            if(f.exists()) f.delete();
+            if (f.exists()) f.delete();
 
             FileOutputStream stream = new FileOutputStream(f);
             stream.write(XML_DEFAULT.getBytes());

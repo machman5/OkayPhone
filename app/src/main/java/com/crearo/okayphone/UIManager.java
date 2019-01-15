@@ -17,11 +17,8 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Xml;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.Gravity;
@@ -38,22 +35,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.commands.specific.RedirectCommand;
 import com.crearo.okayphone.managers.MessagesManager;
 import com.crearo.okayphone.managers.NotesManager;
 import com.crearo.okayphone.managers.TerminalManager;
 import com.crearo.okayphone.managers.TimeManager;
-import com.crearo.okayphone.managers.suggestions.SuggestionRunnable;
 import com.crearo.okayphone.managers.suggestions.SuggestionTextWatcher;
 import com.crearo.okayphone.managers.suggestions.SuggestionsManager;
 import com.crearo.okayphone.managers.xml.XMLPrefsManager;
@@ -64,20 +51,27 @@ import com.crearo.okayphone.managers.xml.options.Toolbar;
 import com.crearo.okayphone.managers.xml.options.Ui;
 import com.crearo.okayphone.tuils.AllowEqualsSequence;
 import com.crearo.okayphone.tuils.NetworkUtils;
-import com.crearo.okayphone.tuils.StoppableThread;
 import com.crearo.okayphone.tuils.Tuils;
 import com.crearo.okayphone.tuils.interfaces.CommandExecuter;
 import com.crearo.okayphone.tuils.interfaces.OnBatteryUpdate;
 import com.crearo.okayphone.tuils.interfaces.OnRedirectionListener;
-import com.crearo.okayphone.tuils.interfaces.SuggestionViewDecorer;
 import com.crearo.okayphone.tuils.stuff.PolicyReceiver;
 import com.crearo.okayphone.tuils.stuff.TrashInterfaces;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UIManager implements OnTouchListener {
 
     public static String ACTION_UPDATE_SUGGESTIONS = BuildConfig.APPLICATION_ID + ".ui_update_suggestions", ACTION_UPDATE_HINT = BuildConfig.APPLICATION_ID + ".ui_update_hint",
-        ACTION_ROOT = BuildConfig.APPLICATION_ID + ".ui_root", ACTION_NOROOT = BuildConfig.APPLICATION_ID + ".ui_noroot",
-        ACTION_LOGTOFILE = BuildConfig.APPLICATION_ID + ".ui_log", ACTION_CLEAR = BuildConfig.APPLICATION_ID + "ui_clear";
+            ACTION_ROOT = BuildConfig.APPLICATION_ID + ".ui_root", ACTION_NOROOT = BuildConfig.APPLICATION_ID + ".ui_noroot",
+            ACTION_LOGTOFILE = BuildConfig.APPLICATION_ID + ".ui_log", ACTION_CLEAR = BuildConfig.APPLICATION_ID + "ui_clear";
 
     public static String
             FILE_NAME = "fileName";
@@ -110,7 +104,7 @@ public class UIManager implements OnTouchListener {
     int mediumPercentage, lowPercentage;
     String batteryFormat;
 
-//    never access this directly, use getLabelView
+    //    never access this directly, use getLabelView
     private TextView[] labelViews = new TextView[Label.values().length];
 
     private float[] labelIndexes = new float[labelViews.length];
@@ -123,16 +117,17 @@ public class UIManager implements OnTouchListener {
 
     private NotesManager notesManager;
     private NotesRunnable notesRunnable;
+
     private class NotesRunnable implements Runnable {
 
         int updateTime = 2000;
 
         @Override
         public void run() {
-            if(notesManager != null) {
+            if (notesManager != null) {
                 int i = Label.notes.ordinal();
 
-                if(notesManager.hasChanged) {
+                if (notesManager.hasChanged) {
                     labelTexts[i] = Tuils.span(mContext, labelSizes[i], notesManager.getNotes());
                     UIManager.this.update(labelIndexes[i]);
                 }
@@ -140,14 +135,17 @@ public class UIManager implements OnTouchListener {
                 handler.postDelayed(this, updateTime);
             }
         }
-    };
+    }
+
+    ;
 
     private BatteryUpdate batteryUpdate;
+
     private class BatteryUpdate implements OnBatteryUpdate {
 
 //        %(charging:not charging)
 
-//        final Pattern optionalCharging = Pattern.compile("%\\(([^\\/]*)\\/([^)]*)\\)", Pattern.CASE_INSENSITIVE);
+        //        final Pattern optionalCharging = Pattern.compile("%\\(([^\\/]*)\\/([^)]*)\\)", Pattern.CASE_INSENSITIVE);
         Pattern optionalCharging;
         final Pattern value = Pattern.compile("%v", Pattern.LITERAL | Pattern.CASE_INSENSITIVE);
 
@@ -159,11 +157,11 @@ public class UIManager implements OnTouchListener {
 
         @Override
         public void update(float p) {
-            if(batteryFormat == null) {
+            if (batteryFormat == null) {
                 batteryFormat = XMLPrefsManager.get(Behavior.battery_format);
 
                 Intent intent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-                if(intent == null) charging = false;
+                if (intent == null) charging = false;
                 else {
                     int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
                     charging = plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
@@ -174,10 +172,10 @@ public class UIManager implements OnTouchListener {
                 optionalCharging = Pattern.compile(optional, Pattern.CASE_INSENSITIVE);
             }
 
-            if(p == -1) p = last;
+            if (p == -1) p = last;
             last = p;
 
-            if(!loaded) {
+            if (!loaded) {
                 loaded = true;
 
                 manyStatus = XMLPrefsManager.getBoolean(Ui.enable_battery_status);
@@ -190,9 +188,9 @@ public class UIManager implements OnTouchListener {
 
             int color;
 
-            if(manyStatus) {
-                if(percentage > mediumPercentage) color = colorHigh;
-                else if(percentage > lowPercentage) color = colorMedium;
+            if (manyStatus) {
+                if (percentage > mediumPercentage) color = colorHigh;
+                else if (percentage > lowPercentage) color = colorMedium;
                 else color = colorLow;
             } else {
                 color = colorHigh;
@@ -225,9 +223,12 @@ public class UIManager implements OnTouchListener {
             charging = false;
             update(-1);
         }
-    };
+    }
+
+    ;
 
     private StorageRunnable storageRunnable;
+
     private class StorageRunnable implements Runnable {
 
         private final String INT_AV = "%iav";
@@ -242,12 +243,12 @@ public class UIManager implements OnTouchListener {
 
         @Override
         public void run() {
-            if(storageFormat == null) {
+            if (storageFormat == null) {
                 storageFormat = XMLPrefsManager.get(Behavior.storage_format);
                 color = XMLPrefsManager.getColor(Theme.storage_color);
             }
 
-            if(storagePatterns == null) {
+            if (storagePatterns == null) {
                 storagePatterns = new ArrayList<>();
 
                 storagePatterns.add(Pattern.compile(INT_AV + "tb", Pattern.CASE_INSENSITIVE | Pattern.LITERAL));
@@ -330,9 +331,12 @@ public class UIManager implements OnTouchListener {
             update(labelIndexes[i]);
             handler.postDelayed(this, STORAGE_DELAY);
         }
-    };
+    }
+
+    ;
 
     private TimeRunnable timeRunnable;
+
     private class TimeRunnable implements Runnable {
 
         boolean active;
@@ -340,7 +344,7 @@ public class UIManager implements OnTouchListener {
 
         @Override
         public void run() {
-            if(!active) {
+            if (!active) {
                 active = true;
                 color = XMLPrefsManager.getColor(Theme.time_color);
             }
@@ -351,12 +355,15 @@ public class UIManager implements OnTouchListener {
             update(labelIndexes[i]);
             handler.postDelayed(this, TIME_DELAY);
         }
-    };
+    }
+
+    ;
 
     private ActivityManager.MemoryInfo memory;
     private ActivityManager activityManager;
 
     private RamRunnable ramRunnable;
+
     private class RamRunnable implements Runnable {
         private final String AV = "%av";
         private final String TOT = "%tot";
@@ -368,13 +375,13 @@ public class UIManager implements OnTouchListener {
 
         @Override
         public void run() {
-            if(ramFormat == null) {
+            if (ramFormat == null) {
                 ramFormat = XMLPrefsManager.get(Behavior.ram_format);
 
                 color = XMLPrefsManager.getColor(Theme.ram_color);
             }
 
-            if(ramPatterns == null) {
+            if (ramPatterns == null) {
                 ramPatterns = new ArrayList<>();
 
                 ramPatterns.add(Pattern.compile(AV + "tb", Pattern.CASE_INSENSITIVE | Pattern.LITERAL));
@@ -419,9 +426,12 @@ public class UIManager implements OnTouchListener {
             update(labelIndexes[i]);
             handler.postDelayed(this, RAM_DELAY);
         }
-    };
+    }
+
+    ;
 
     private Runnable networkRunnable;
+
     private class NetworkRunnable implements Runnable {
 //        %() -> wifi
 //        %[] -> data
@@ -480,13 +490,14 @@ public class UIManager implements OnTouchListener {
 
         @Override
         public void run() {
-            if(format == null) {
+            if (format == null) {
                 format = XMLPrefsManager.get(Behavior.network_info_format);
                 color = XMLPrefsManager.getColor(Theme.network_info_color);
                 maxDepth = XMLPrefsManager.getInt(Behavior.max_optional_depth);
 
                 updateTime = XMLPrefsManager.getInt(Behavior.network_info_update_ms);
-                if(updateTime < 1000) updateTime = Integer.parseInt(Behavior.network_info_update_ms.defaultValue());
+                if (updateTime < 1000)
+                    updateTime = Integer.parseInt(Behavior.network_info_update_ms.defaultValue());
 
                 connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
                 wifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -515,7 +526,7 @@ public class UIManager implements OnTouchListener {
 //            wifi
             boolean wifiOn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
             String wifiName = null;
-            if(wifiOn) {
+            if (wifiOn) {
                 WifiInfo connectionInfo = wifiManager.getConnectionInfo();
                 if (connectionInfo != null) {
                     wifiName = connectionInfo.getSSID();
@@ -526,10 +537,11 @@ public class UIManager implements OnTouchListener {
             boolean mobileOn = false;
             try {
                 mobileOn = method != null && connectivityManager != null && (Boolean) method.invoke(connectivityManager);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
 
             String mobileType = null;
-            if(mobileOn) {
+            if (mobileOn) {
                 mobileType = Tuils.getNetworkType(mContext);
             } else {
                 mobileType = "unknown";
@@ -540,10 +552,10 @@ public class UIManager implements OnTouchListener {
 
             String copy = format;
 
-            if(maxDepth > 0) {
-                copy = apply(1, copy, new boolean[] {wifiOn, mobileOn, bluetoothOn}, optionalWifi, optionalData, optionalBluetooth);
-                copy = apply(1, copy, new boolean[] {mobileOn, wifiOn, bluetoothOn}, optionalData, optionalWifi, optionalBluetooth);
-                copy = apply(1, copy, new boolean[] {bluetoothOn, wifiOn, mobileOn}, optionalBluetooth, optionalWifi, optionalData);
+            if (maxDepth > 0) {
+                copy = apply(1, copy, new boolean[]{wifiOn, mobileOn, bluetoothOn}, optionalWifi, optionalData, optionalBluetooth);
+                copy = apply(1, copy, new boolean[]{mobileOn, wifiOn, bluetoothOn}, optionalData, optionalWifi, optionalBluetooth);
+                copy = apply(1, copy, new boolean[]{bluetoothOn, wifiOn, mobileOn}, optionalBluetooth, optionalWifi, optionalData);
             }
 
             copy = w0.matcher(copy).replaceAll(wifiOn ? one : zero);
@@ -576,11 +588,11 @@ public class UIManager implements OnTouchListener {
 
         private String apply(int depth, String s, boolean[] on, Pattern... ps) {
 
-            if(ps.length == 0) return s;
+            if (ps.length == 0) return s;
 
             Matcher m = ps[0].matcher(s);
             while (m.find()) {
-                if(m.groupCount() < 2) {
+                if (m.groupCount() < 2) {
                     s = s.replace(m.group(0), Tuils.EMPTYSTRING);
                     continue;
                 }
@@ -588,17 +600,17 @@ public class UIManager implements OnTouchListener {
                 String g1 = m.group(1);
                 String g2 = m.group(2);
 
-                if(depth < maxDepth) {
-                    for(int c = 0; c < ps.length - 1; c++) {
+                if (depth < maxDepth) {
+                    for (int c = 0; c < ps.length - 1; c++) {
 
                         boolean[] subOn = new boolean[on.length - 1];
-                        subOn[0] = on[c+1];
+                        subOn[0] = on[c + 1];
 
                         Pattern[] subPs = new Pattern[ps.length - 1];
-                        subPs[0] = ps[c+1];
+                        subPs[0] = ps[c + 1];
 
-                        for(int j = 1, k = 1; j < subOn.length; j++, k++) {
-                            if(k == c+1) {
+                        for (int j = 1, k = 1; j < subOn.length; j++, k++) {
+                            if (k == c + 1) {
                                 j--;
                                 continue;
                             }
@@ -623,23 +635,25 @@ public class UIManager implements OnTouchListener {
         int base = (int) line;
 
         List<Float> indexs = new ArrayList<>();
-        for(int count = 0; count < Label.values().length; count++) {
-            if((int) labelIndexes[count] == base && labelTexts[count] != null) indexs.add(labelIndexes[count]);
+        for (int count = 0; count < Label.values().length; count++) {
+            if ((int) labelIndexes[count] == base && labelTexts[count] != null)
+                indexs.add(labelIndexes[count]);
         }
 //        now I'm sorting the labels on the same line for decimals (2.1, 2.0, ...)
         Collections.sort(indexs);
 
         CharSequence sequence = Tuils.EMPTYSTRING;
 
-        for(int c = 0; c < indexs.size(); c++) {
+        for (int c = 0; c < indexs.size(); c++) {
             float i = indexs.get(c);
 
-            for(int a = 0; a < Label.values().length; a++) {
-                if(i == labelIndexes[a] && labelTexts[a] != null) sequence = TextUtils.concat(sequence, labelTexts[a]);
+            for (int a = 0; a < Label.values().length; a++) {
+                if (i == labelIndexes[a] && labelTexts[a] != null)
+                    sequence = TextUtils.concat(sequence, labelTexts[a]);
             }
         }
 
-        if(sequence.length() == 0) labelViews[base].setVisibility(View.GONE);
+        if (sequence.length() == 0) labelViews[base].setVisibility(View.GONE);
         else {
             labelViews[base].setVisibility(View.VISIBLE);
             labelViews[base].setText(sequence);
@@ -673,22 +687,23 @@ public class UIManager implements OnTouchListener {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
 
-                if(action.equals(ACTION_UPDATE_SUGGESTIONS)) {
-                    if(suggestionsManager != null) suggestionsManager.requestSuggestion(Tuils.EMPTYSTRING);
-                } else if(action.equals(ACTION_UPDATE_HINT)) {
+                if (action.equals(ACTION_UPDATE_SUGGESTIONS)) {
+                    if (suggestionsManager != null)
+                        suggestionsManager.requestSuggestion(Tuils.EMPTYSTRING);
+                } else if (action.equals(ACTION_UPDATE_HINT)) {
                     mTerminalAdapter.setDefaultHint();
-                } else if(action.equals(ACTION_ROOT)) {
+                } else if (action.equals(ACTION_ROOT)) {
                     mTerminalAdapter.onRoot();
-                } else if(action.equals(ACTION_NOROOT)) {
+                } else if (action.equals(ACTION_NOROOT)) {
                     mTerminalAdapter.onStandard();
 //                } else if(action.equals(ACTION_CLEAR_SUGGESTIONS)) {
 //                    if(suggestionsManager != null) suggestionsManager.clear();
-                } else if(action.equals(ACTION_LOGTOFILE)) {
+                } else if (action.equals(ACTION_LOGTOFILE)) {
                     String fileName = intent.getStringExtra(FILE_NAME);
-                    if(fileName == null || fileName.contains(File.separator)) return;
+                    if (fileName == null || fileName.contains(File.separator)) return;
 
                     File file = new File(Tuils.getFolder(), fileName);
-                    if(file.exists()) file.delete();
+                    if (file.exists()) file.delete();
 
                     try {
                         file.createNewFile();
@@ -700,9 +715,10 @@ public class UIManager implements OnTouchListener {
                     } catch (Exception e) {
                         Tuils.sendOutput(Color.RED, context, e.toString());
                     }
-                } else if(action.equals(ACTION_CLEAR)) {
+                } else if (action.equals(ACTION_CLEAR)) {
                     mTerminalAdapter.clear();
-                    if(suggestionsManager != null) suggestionsManager.requestSuggestion(Tuils.EMPTYSTRING);
+                    if (suggestionsManager != null)
+                        suggestionsManager.requestSuggestion(Tuils.EMPTYSTRING);
                 }
             }
         };
@@ -725,13 +741,13 @@ public class UIManager implements OnTouchListener {
         }
 
 //        scrolllllll
-        if(XMLPrefsManager.getBoolean(Behavior.auto_scroll)) {
+        if (XMLPrefsManager.getBoolean(Behavior.auto_scroll)) {
             rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     int heightDiff = rootView.getRootView().getHeight() - rootView.getHeight();
                     if (heightDiff > Tuils.dpToPx(context, 200)) { // if more than 200 dp, it's probably a keyboard...
-                        if(mTerminalAdapter != null) mTerminalAdapter.scrollToEnd();
+                        if (mTerminalAdapter != null) mTerminalAdapter.scrollToEnd();
                     }
                 }
             });
@@ -753,7 +769,7 @@ public class UIManager implements OnTouchListener {
         DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
         rootView.setPadding(Tuils.mmToPx(metrics, leftMM), Tuils.mmToPx(metrics, topMM), Tuils.mmToPx(metrics, rightMM), Tuils.mmToPx(metrics, bottomMM));
 
-        labelViews = new TextView[] {
+        labelViews = new TextView[]{
                 (TextView) rootView.findViewById(R.id.tv0),
                 (TextView) rootView.findViewById(R.id.tv1),
                 (TextView) rootView.findViewById(R.id.tv2),
@@ -794,11 +810,11 @@ public class UIManager implements OnTouchListener {
         AllowEqualsSequence sequence = new AllowEqualsSequence(indexes, Label.values());
 
         int effectiveCount = 0;
-        for(int count = 0; count < labelViews.length; count++) {
+        for (int count = 0; count < labelViews.length; count++) {
             Object[] os = sequence.get(count);
 
 //            views on the same line
-            for(int j = 0; j < os.length; j++) {
+            for (int j = 0; j < os.length; j++) {
 //                i is the object gave to the constructor
                 int i = ((Label) os[j]).ordinal();
 //                v is the adjusted index (2.0, 2.1, 2.2, ...)
@@ -807,14 +823,15 @@ public class UIManager implements OnTouchListener {
                 labelIndexes[i] = v;
             }
 
-            if(count >= sequence.getMinKey() && count <= sequence.getMaxKey() && os.length > 0) {
+            if (count >= sequence.getMinKey() && count <= sequence.getMaxKey() && os.length > 0) {
                 labelViews[count].setTypeface(Tuils.getTypeface(context));
 
                 int ec = effectiveCount++;
 
 //                -1 = left     0 = center     1 = right
                 int p = alignment[ec];
-                if(p >= 0) labelViews[count].setGravity(p == 0 ? Gravity.CENTER_HORIZONTAL : Gravity.RIGHT);
+                if (p >= 0)
+                    labelViews[count].setGravity(p == 0 ? Gravity.CENTER_HORIZONTAL : Gravity.RIGHT);
             } else {
                 labelViews[count].setVisibility(View.GONE);
             }
@@ -828,7 +845,7 @@ public class UIManager implements OnTouchListener {
             handler.post(ramRunnable);
         }
 
-        if(show[Label.storage.ordinal()]) {
+        if (show[Label.storage.ordinal()]) {
             storageRunnable = new StorageRunnable();
             handler.post(storageRunnable);
         }
@@ -853,12 +870,12 @@ public class UIManager implements OnTouchListener {
             update(labelIndexes[Label.device.ordinal()]);
         }
 
-        if(show[Label.time.ordinal()]) {
+        if (show[Label.time.ordinal()]) {
             timeRunnable = new TimeRunnable();
             handler.post(timeRunnable);
         }
 
-        if(show[Label.battery.ordinal()]) {
+        if (show[Label.battery.ordinal()]) {
             batteryUpdate = new BatteryUpdate();
 
             mediumPercentage = XMLPrefsManager.getInt(Behavior.battery_medium);
@@ -869,13 +886,13 @@ public class UIManager implements OnTouchListener {
             batteryUpdate = null;
         }
 
-        if(show[Label.network.ordinal()]) {
+        if (show[Label.network.ordinal()]) {
             networkRunnable = new NetworkRunnable();
             handler.post(networkRunnable);
         }
 
         notesManager = new NotesManager(context, labelViews[(int) labelIndexes[Label.notes.ordinal()]]);
-        if(show[Label.notes.ordinal()]) {
+        if (show[Label.notes.ordinal()]) {
             notesRunnable = new NotesRunnable();
             handler.post(notesRunnable);
         }
@@ -910,7 +927,7 @@ public class UIManager implements OnTouchListener {
         ImageButton deleteView = null;
         ImageButton pasteView = null;
 
-        if(!showToolbar) {
+        if (!showToolbar) {
             inputOutputView.findViewById(R.id.tools_view).setVisibility(View.GONE);
         } else {
             backView = (ImageButton) inputOutputView.findViewById(R.id.back_view);
@@ -927,7 +944,7 @@ public class UIManager implements OnTouchListener {
             sv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if(hasFocus) {
+                    if (hasFocus) {
                         v.clearFocus();
                     }
                 }
@@ -944,13 +961,13 @@ public class UIManager implements OnTouchListener {
 
         lockOnDbTap = XMLPrefsManager.getBoolean(Behavior.double_tap_lock);
         doubleTapCmd = XMLPrefsManager.get(Behavior.double_tap_cmd);
-        if(!lockOnDbTap && doubleTapCmd == null) {
+        if (!lockOnDbTap && doubleTapCmd == null) {
             policy = null;
             component = null;
             det = null;
         } else initDetector();
 
-        if(XMLPrefsManager.getBoolean(Behavior.show_hints)) {
+        if (XMLPrefsManager.getBoolean(Behavior.show_hints)) {
             MessagesManager messagesManager = new MessagesManager(context,
                     new MessagesManager.Message(R.string.hint_alias),
                     new MessagesManager.Message(R.string.hint_appgroups),
@@ -968,7 +985,7 @@ public class UIManager implements OnTouchListener {
                     new MessagesManager.Message(R.string.hint_tutorial),
                     new MessagesManager.Message(R.string.hint_twitter),
                     new MessagesManager.Message(R.string.hint_wallpaper),
-                    new MessagesManager.Message( R.string.hint_excludenotification)
+                    new MessagesManager.Message(R.string.hint_excludenotification)
             );
 
             mTerminalAdapter.setMessagesManager(messagesManager);
@@ -976,13 +993,13 @@ public class UIManager implements OnTouchListener {
     }
 
     public void dispose() {
-        if(handler != null) {
+        if (handler != null) {
             handler.removeCallbacksAndMessages(null);
             handler = null;
         }
 
-        if(suggestionsManager != null) suggestionsManager.dispose();
-        if(notesManager != null) notesManager.dispose(mContext);
+        if (suggestionsManager != null) suggestionsManager.dispose();
+        if (notesManager != null) notesManager.dispose(mContext);
         LocalBroadcastManager.getInstance(mContext.getApplicationContext()).unregisterReceiver(receiver);
         Tuils.unregisterBatteryReceiver(mContext);
 
@@ -1000,7 +1017,7 @@ public class UIManager implements OnTouchListener {
     }
 
     public void onStart(boolean openKeyboardOnStart) {
-        if(openKeyboardOnStart) openKeyboard();
+        if (openKeyboardOnStart) openKeyboard();
     }
 
     public void setInput(String s) {
@@ -1028,11 +1045,11 @@ public class UIManager implements OnTouchListener {
     }
 
     public void disableSuggestions() {
-        if(suggestionsManager != null) suggestionsManager.hide();
+        if (suggestionsManager != null) suggestionsManager.hide();
     }
 
     public void enableSuggestions() {
-        if(suggestionsManager != null) suggestionsManager.show();
+        if (suggestionsManager != null) suggestionsManager.show();
     }
 
     public void onBackPressed() {
@@ -1061,14 +1078,14 @@ public class UIManager implements OnTouchListener {
 
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                if(doubleTapCmd != null && doubleTapCmd.length() > 0) {
+                if (doubleTapCmd != null && doubleTapCmd.length() > 0) {
                     String input = mTerminalAdapter.getInput();
                     mTerminalAdapter.setInput(doubleTapCmd);
                     mTerminalAdapter.simulateEnter();
                     mTerminalAdapter.setInput(input);
                 }
 
-                if(lockOnDbTap) {
+                if (lockOnDbTap) {
                     boolean admin = policy.isAdminActive(component);
 
                     if (!admin) {

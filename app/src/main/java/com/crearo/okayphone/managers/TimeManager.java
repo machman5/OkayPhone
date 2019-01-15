@@ -7,14 +7,14 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 
+import com.crearo.okayphone.managers.xml.XMLPrefsManager;
+import com.crearo.okayphone.managers.xml.options.Behavior;
+import com.crearo.okayphone.tuils.Tuils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.crearo.okayphone.managers.xml.XMLPrefsManager;
-import com.crearo.okayphone.managers.xml.options.Behavior;
-import com.crearo.okayphone.tuils.Tuils;
 
 /**
  * Created by francescoandreuzzi on 26/07/2017.
@@ -37,7 +37,7 @@ public class TimeManager {
         String[] formats = format.split(separator);
         dateFormatList = new SimpleDateFormat[formats.length];
 
-        for(int c = 0; c < dateFormatList.length; c++) {
+        for (int c = 0; c < dateFormatList.length; c++) {
             try {
                 formats[c] = NEWLINE_PATTERN.matcher(formats[c]).replaceAll(Tuils.NEWLINE);
                 dateFormatList[c] = new SimpleDateFormat(formats[c]);
@@ -50,9 +50,9 @@ public class TimeManager {
     }
 
     private SimpleDateFormat get(int index) {
-        if(dateFormatList == null) return null;
-        if(index < 0 || index >= dateFormatList.length) index = 0;
-        if(index == 0 && dateFormatList.length == 0) return null;
+        if (dateFormatList == null) return null;
+        if (index < 0 || index >= dateFormatList.length) index = 0;
+        if (index == 0 && dateFormatList.length == 0) return null;
 
         return dateFormatList[index];
     }
@@ -74,47 +74,47 @@ public class TimeManager {
     }
 
     public CharSequence replace(Context context, int size, CharSequence cs, long tm, int color) {
-        if(tm == -1) {
+        if (tm == -1) {
             tm = System.currentTimeMillis();
         }
 
         Date date = new Date(tm);
 
         Matcher matcher = extractor.matcher(cs.toString());
-        if(matcher.find()) {
-            for(int count = 1; count <= matcher.groupCount(); count++) {
+        if (matcher.find()) {
+            for (int count = 1; count <= matcher.groupCount(); count++) {
                 SimpleDateFormat formatter = get(Integer.parseInt(matcher.group(count)));
-                if(formatter == null) return cs;
+                if (formatter == null) return cs;
 
                 String tf = formatter.format(date);
 
                 SpannableString spannableString = new SpannableString(tf);
-                if(color != Integer.MAX_VALUE) {
+                if (color != Integer.MAX_VALUE) {
                     spannableString.setSpan(new ForegroundColorSpan(color), 0, tf.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
-                if(size != Integer.MAX_VALUE && context != null) {
+                if (size != Integer.MAX_VALUE && context != null) {
                     spannableString.setSpan(new AbsoluteSizeSpan(Tuils.convertSpToPixels(size, context)), 0, tf.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
-                cs = TextUtils.replace(cs, new String[] {"%t" + matcher.group(count)}, new CharSequence[] {spannableString});
+                cs = TextUtils.replace(cs, new String[]{"%t" + matcher.group(count)}, new CharSequence[]{spannableString});
             }
         }
 
         SimpleDateFormat formatter = get(0);
-        if(formatter == null) return cs;
+        if (formatter == null) return cs;
 
         String tf = formatter.format(date);
 
         SpannableString spannableString = new SpannableString(tf);
-        if(color != Integer.MAX_VALUE) {
+        if (color != Integer.MAX_VALUE) {
             spannableString.setSpan(new ForegroundColorSpan(color), 0, tf.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        if(size != Integer.MAX_VALUE && context != null) {
+        if (size != Integer.MAX_VALUE && context != null) {
             spannableString.setSpan(new AbsoluteSizeSpan(Tuils.convertSpToPixels(size, context)), 0, tf.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        cs = TextUtils.replace(cs, new String[] {"%t"}, new CharSequence[] {spannableString});
+        cs = TextUtils.replace(cs, new String[]{"%t"}, new CharSequence[]{spannableString});
 
         return cs;
     }

@@ -3,12 +3,6 @@ package com.crearo.okayphone.commands;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.commands.main.Param;
 import com.crearo.okayphone.commands.specific.ParamCommand;
@@ -26,6 +20,12 @@ import com.crearo.okayphone.managers.xml.options.Notifications;
 import com.crearo.okayphone.managers.xml.options.Rss;
 import com.crearo.okayphone.tuils.SimpleMutableEntry;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressLint("DefaultLocale")
 public class CommandTuils {
@@ -58,9 +58,9 @@ public class CommandTuils {
         int[] types;
 
         try {
-            if(cmd instanceof ParamCommand) {
+            if (cmd instanceof ParamCommand) {
                 ArgInfo arg = param((MainPack) info, (ParamCommand) cmd, input);
-                if(arg == null || !arg.found) {
+                if (arg == null || !arg.found) {
                     command.indexNotFound = 0;
                     args.add(input);
                     command.nArgs = 1;
@@ -68,7 +68,7 @@ public class CommandTuils {
                     return command;
                 } else
 
-                input = arg.residualString;
+                    input = arg.residualString;
                 Param p = (Param) arg.arg;
                 types = p.args();
 
@@ -83,12 +83,12 @@ public class CommandTuils {
                     if (input == null) break;
 
                     input = input.trim();
-                    if(input.length() == 0) {
+                    if (input.length() == 0) {
                         break;
                     }
 
                     ArgInfo arg = CommandTuils.getArg(info, input, types[count], suggestion);
-                    if(arg == null) {
+                    if (arg == null) {
                         return null;
                     }
 
@@ -105,7 +105,8 @@ public class CommandTuils {
                     input = arg.residualString;
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         command.mArgs = args.toArray(new Object[args.size()]);
         command.nArgs = nArgs;
@@ -144,30 +145,30 @@ public class CommandTuils {
             return textList(input);
         } else if (type == CommandAbstraction.SONG && info instanceof MainPack) {
             MainPack pack = (MainPack) info;
-            if(pack.player == null) return null;
+            if (pack.player == null) return null;
 
             return song(input, pack.player);
         } else if (type == CommandAbstraction.COMMAND) {
             return command(input, info.commandGroup);
-        } else if(type == CommandAbstraction.BOOLEAN) {
+        } else if (type == CommandAbstraction.BOOLEAN) {
             return bln(input);
-        } else if(type == CommandAbstraction.COLOR) {
+        } else if (type == CommandAbstraction.COLOR) {
             return color(input);
-        } else if(type == CommandAbstraction.CONFIG_ENTRY) {
+        } else if (type == CommandAbstraction.CONFIG_ENTRY) {
             return configEntry(input);
-        } else if(type == CommandAbstraction.CONFIG_FILE) {
+        } else if (type == CommandAbstraction.CONFIG_FILE) {
             return configFile(input);
-        } else if(type == CommandAbstraction.INT) {
+        } else if (type == CommandAbstraction.INT) {
             return integer(input);
-        } else if(type == CommandAbstraction.DEFAULT_APP) {
+        } else if (type == CommandAbstraction.DEFAULT_APP) {
             return defaultApp(input, ((MainPack) info).appsManager);
-        } else if(type == CommandAbstraction.ALL_PACKAGES) {
+        } else if (type == CommandAbstraction.ALL_PACKAGES) {
             return allPackages(input, ((MainPack) info).appsManager);
-        } else if(type == CommandAbstraction.NO_SPACE_STRING || type == CommandAbstraction.APP_GROUP || type == CommandAbstraction.BOUND_REPLY_APP) {
+        } else if (type == CommandAbstraction.NO_SPACE_STRING || type == CommandAbstraction.APP_GROUP || type == CommandAbstraction.BOUND_REPLY_APP) {
             return noSpaceString(input);
-        } else if(type == CommandAbstraction.APP_INSIDE_GROUP) {
+        } else if (type == CommandAbstraction.APP_INSIDE_GROUP) {
             return activityName(input, ((MainPack) info).appsManager);
-        } else if(type == CommandAbstraction.LONG) {
+        } else if (type == CommandAbstraction.LONG) {
             return numberLong(input);
         }
 
@@ -183,7 +184,7 @@ public class CommandTuils {
             long l = Long.parseLong(split[0]);
 
             StringBuilder builder = new StringBuilder();
-            for(int c = 1; c < split.length; c++) {
+            for (int c = 1; c < split.length; c++) {
                 builder.append(split[c]).append(Tuils.SPACE);
             }
             return new ArgInfo(l, builder.toString().trim(), true, 1);
@@ -209,7 +210,7 @@ public class CommandTuils {
 
     private static ArgInfo bln(String input) {
         String used, notUsed;
-        if(input.contains(Tuils.SPACE)) {
+        if (input.contains(Tuils.SPACE)) {
             int space = input.indexOf(Tuils.SPACE);
             used = input.substring(0, space);
             notUsed = input.substring(space + 1);
@@ -238,12 +239,12 @@ public class CommandTuils {
     }
 
     private static ArgInfo noSpaceString(String input) {
-        if(input == null) return null;
+        if (input == null) return null;
 
         int index = input.indexOf(Tuils.SPACE);
-        if(index == -1) index = input.length();
+        if (index == -1) index = input.length();
 
-        return new ArgInfo(input.substring(0,index), input.length() > index ? input.substring(index + 1) : null, true, 1);
+        return new ArgInfo(input.substring(0, index), input.length() > index ? input.substring(index + 1) : null, true, 1);
     }
 
     private static ArgInfo command(String string, CommandGroup active) {
@@ -264,18 +265,18 @@ public class CommandTuils {
     @SuppressWarnings("unchecked")
     private static ArgInfo file(String input, File cd) {
         input = input.trim();
-        if(input.startsWith("\"") || input.startsWith("'") && input.substring(1, input.length()).contains("\"")) {
+        if (input.startsWith("\"") || input.startsWith("'") && input.substring(1, input.length()).contains("\"")) {
             String afterFirst = input.substring(1, input.length());
 
             int endIndex = afterFirst.indexOf("\"");
-            if(endIndex == -1) endIndex = afterFirst.indexOf("'");
+            if (endIndex == -1) endIndex = afterFirst.indexOf("'");
 
-            if(endIndex != -1) {
+            if (endIndex != -1) {
                 String file = afterFirst.substring(0, endIndex);
                 String residual = afterFirst.substring(endIndex + 1, afterFirst.length());
 
                 File f;
-                if(afterFirst.startsWith("/")) /*absolute*/ f = new File(file);
+                if (afterFirst.startsWith("/")) /*absolute*/ f = new File(file);
                 else f = new File(cd, file);
 
                 return new ArgInfo(f, residual, true, 1);
@@ -345,7 +346,7 @@ public class CommandTuils {
         List<File> files;
 
         FileManager.WildcardInfo info = FileManager.wildcard(dir.notFound);
-        if(info == null) {
+        if (info == null) {
             return null;
         }
 
@@ -356,10 +357,10 @@ public class CommandTuils {
 
         if (info.allExtensions && info.allNames) {
             files = Arrays.asList(cd.listFiles());
-        } else if(info.allNames) {
+        } else if (info.allNames) {
             extensionFileFilter.setExtension(info.extension);
             files = Arrays.asList(cd.listFiles(extensionFileFilter));
-        } else if(info.allExtensions) {
+        } else if (info.allExtensions) {
             nameFileFilter.setName(info.name);
             files = Arrays.asList(cd.listFiles(nameFileFilter));
         } else {
@@ -374,7 +375,7 @@ public class CommandTuils {
     }
 
     private static ArgInfo param(MainPack pack, ParamCommand cmd, String input) {
-        if(input == null || input.trim().length() == 0) return null;
+        if (input == null || input.trim().length() == 0) return null;
 
         int indexOfFirstSpace = input.indexOf(Tuils.SPACE);
         if (indexOfFirstSpace == -1) {
@@ -382,7 +383,7 @@ public class CommandTuils {
         }
 
         String param = input.substring(0, indexOfFirstSpace).trim();
-        if(!param.startsWith("-")) param = "-".concat(param);
+        if (!param.startsWith("-")) param = "-".concat(param);
 
         SimpleMutableEntry<Boolean, Param> sm = cmd.getParam(pack, param);
         Param p = sm.getValue();
@@ -403,7 +404,7 @@ public class CommandTuils {
 
     private static ArgInfo allPackages(String input, AppsManager apps) {
         AppsManager.LaunchInfo info = apps.findLaunchInfoWithLabel(input, AppsManager.SHOWN_APPS);
-        if(info == null) {
+        if (info == null) {
             info = apps.findLaunchInfoWithLabel(input, AppsManager.HIDDEN_APPS);
         }
 
@@ -412,7 +413,7 @@ public class CommandTuils {
 
     private static ArgInfo defaultApp(String input, AppsManager apps) {
         AppsManager.LaunchInfo info = apps.findLaunchInfoWithLabel(input, AppsManager.SHOWN_APPS);
-        if(info == null) {
+        if (info == null) {
             return new ArgInfo(input, null, true, 1);
         } else {
             return new ArgInfo(info, null, true, 1);
@@ -437,10 +438,10 @@ public class CommandTuils {
     private static ArgInfo configEntry(String input) {
         int index = input.indexOf(Tuils.SPACE);
 
-        if(xmlPrefsEntrys == null) {
+        if (xmlPrefsEntrys == null) {
             xmlPrefsEntrys = new ArrayList<>();
 
-            for(XMLPrefsManager.XMLPrefsRoot element : XMLPrefsManager.XMLPrefsRoot.values()) {
+            for (XMLPrefsManager.XMLPrefsRoot element : XMLPrefsManager.XMLPrefsRoot.values()) {
                 xmlPrefsEntrys.addAll(element.enums);
             }
             Collections.addAll(xmlPrefsEntrys, Apps.values());
@@ -448,27 +449,27 @@ public class CommandTuils {
             Collections.addAll(xmlPrefsEntrys, Rss.values());
         }
 
-        String candidate = index == -1 ? input : input.substring(0,index);
-        for(XMLPrefsSave xs : xmlPrefsEntrys) {
-            if(xs.is(candidate)) {
-                return new ArgInfo(xs, index == -1 ? null : input.substring(index + 1,input.length()), true, 1);
+        String candidate = index == -1 ? input : input.substring(0, index);
+        for (XMLPrefsSave xs : xmlPrefsEntrys) {
+            if (xs.is(candidate)) {
+                return new ArgInfo(xs, index == -1 ? null : input.substring(index + 1, input.length()), true, 1);
             }
         }
         return new ArgInfo(null, input, false, 0);
     }
 
     private static ArgInfo configFile(String input) {
-        if(xmlPrefsFiles == null) {
+        if (xmlPrefsFiles == null) {
             xmlPrefsFiles = new ArrayList<>();
-            for(XMLPrefsManager.XMLPrefsRoot element : XMLPrefsManager.XMLPrefsRoot.values())
+            for (XMLPrefsManager.XMLPrefsRoot element : XMLPrefsManager.XMLPrefsRoot.values())
                 xmlPrefsFiles.add(element.path);
             xmlPrefsFiles.add(AppsManager.PATH);
             xmlPrefsFiles.add(NotificationManager.PATH);
             xmlPrefsFiles.add(RssManager.PATH);
         }
 
-        for(String xs : xmlPrefsFiles) {
-            if(xs.equalsIgnoreCase(input)) return new ArgInfo(xs, null, true, 1);
+        for (String xs : xmlPrefsFiles) {
+            if (xs.equalsIgnoreCase(input)) return new ArgInfo(xs, null, true, 1);
         }
         return new ArgInfo(null, input, false, 0);
     }
@@ -478,7 +479,7 @@ public class CommandTuils {
         String s;
 
         int index = input.indexOf(Tuils.SPACE);
-        if(index == -1) s = input;
+        if (index == -1) s = input;
         else s = input.substring(0, index);
 
         try {

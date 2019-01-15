@@ -9,5 +9,6 @@ import com.crearo.okayphone.commands.specific.RedirectCommand;
 public interface OnRedirectionListener {
 
     void onRedirectionRequest(RedirectCommand cmd);
+
     void onRedirectionEnd(RedirectCommand cmd);
 }

@@ -7,14 +7,14 @@ import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 
-import java.lang.reflect.Field;
-
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.commands.CommandAbstraction;
 import com.crearo.okayphone.commands.ExecutePack;
 import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.commands.specific.APICommand;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.lang.reflect.Field;
 
 public class data implements APICommand, CommandAbstraction {
 
@@ -29,7 +29,8 @@ public class data implements APICommand, CommandAbstraction {
         if (info.connectivityMgr == null) {
             try {
                 init(info);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
 
         boolean mobileConnected;

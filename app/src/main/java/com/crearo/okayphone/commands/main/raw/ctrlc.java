@@ -3,8 +3,6 @@ package com.crearo.okayphone.commands.main.raw;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
-import java.io.File;
-
 import com.crearo.okayphone.MainManager;
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.UIManager;
@@ -14,6 +12,8 @@ import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.managers.xml.XMLPrefsManager;
 import com.crearo.okayphone.managers.xml.options.Behavior;
 import com.crearo.okayphone.tuils.StoppableThread;
+
+import java.io.File;
 
 /**
  * Created by francescoandreuzzi on 26/07/2017.

@@ -1,13 +1,13 @@
 package com.crearo.okayphone.commands.main.raw;
 
-import java.io.File;
-
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.commands.CommandAbstraction;
 import com.crearo.okayphone.commands.ExecutePack;
 import com.crearo.okayphone.commands.main.MainPack;
 import com.crearo.okayphone.managers.FileManager;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.io.File;
 
 public class open implements CommandAbstraction {
 
@@ -18,7 +18,8 @@ public class open implements CommandAbstraction {
 
         int result = FileManager.openFile(info.context, file);
 
-        if (result == FileManager.ISDIRECTORY) return info.res.getString(R.string.output_isdirectory);
+        if (result == FileManager.ISDIRECTORY)
+            return info.res.getString(R.string.output_isdirectory);
         if (result == FileManager.IOERROR) return info.res.getString(R.string.output_error);
 
         return Tuils.EMPTYSTRING;

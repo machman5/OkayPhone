@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 
-import java.io.File;
-
 import com.crearo.okayphone.BuildConfig;
 import com.crearo.okayphone.R;
 import com.crearo.okayphone.UIManager;
@@ -20,6 +18,8 @@ import com.crearo.okayphone.commands.specific.ParamCommand;
 import com.crearo.okayphone.managers.xml.XMLPrefsManager;
 import com.crearo.okayphone.tuils.Tuils;
 import com.crearo.okayphone.tuils.stuff.PolicyReceiver;
+
+import java.io.File;
 
 /**
  * Created by francescoandreuzzi on 10/06/2017.
@@ -57,7 +57,7 @@ public class tui extends ParamCommand {
         log {
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.PLAIN_TEXT};
+                return new int[]{CommandAbstraction.PLAIN_TEXT};
             }
 
             @Override
@@ -77,13 +77,13 @@ public class tui extends ParamCommand {
         priority {
             @Override
             public int[] args() {
-                return new int[] {CommandAbstraction.COMMAND, CommandAbstraction.INT};
+                return new int[]{CommandAbstraction.COMMAND, CommandAbstraction.INT};
             }
 
             @Override
             public String exec(ExecutePack pack) {
                 File file = new File(Tuils.getFolder(), "cmd.xml");
-                return XMLPrefsManager.set(file, pack.get().getClass().getSimpleName() + CommandsPreferences.PRIORITY_SUFFIX, new String[] {XMLPrefsManager.VALUE_ATTRIBUTE}, new String[] {String.valueOf(pack.getInt())});
+                return XMLPrefsManager.set(file, pack.get().getClass().getSimpleName() + CommandsPreferences.PRIORITY_SUFFIX, new String[]{XMLPrefsManager.VALUE_ATTRIBUTE}, new String[]{String.valueOf(pack.getInt())});
             }
 
             @Override
@@ -178,7 +178,7 @@ public class tui extends ParamCommand {
             Param[] ps = values();
             String[] ss = new String[ps.length];
 
-            for(int count = 0; count < ps.length; count++) {
+            for (int count = 0; count < ps.length; count++) {
                 ss[count] = ps[count].label();
             }
 

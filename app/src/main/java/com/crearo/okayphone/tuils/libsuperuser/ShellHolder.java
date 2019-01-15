@@ -2,11 +2,11 @@ package com.crearo.okayphone.tuils.libsuperuser;
 
 import android.content.Context;
 
-import java.io.File;
-
 import com.crearo.okayphone.managers.xml.XMLPrefsManager;
 import com.crearo.okayphone.managers.xml.options.Behavior;
 import com.crearo.okayphone.tuils.Tuils;
+
+import java.io.File;
 
 /**
  * Created by francescoandreuzzi on 18/08/2017.
